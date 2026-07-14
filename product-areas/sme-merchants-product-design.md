@@ -774,422 +774,105 @@ sequenceDiagram
 
 ## 4.1 Merchant Dashboard - Data Architecture
 
-### Database Schema Design
-
 ```mermaid
 graph TB
     subgraph "Raw Data Layer"
-        QR_TXN["qr_transactions<br/>- txn_id<br/>- merchant_id<br/>- amount<br/>- timestamp<br/>- category<br/>- customer_phone"]
-        CATEG["categories<br/>- category_id<br/>- category_name<br/>- tax_rate"]
+        QR_TXN["qr_transactions<br/>- txn_id, merchant_id<br/>- amount, timestamp<br/>- category, customer_phone"]
+        CATEG["categories<br/>- id, name, tax_rate"]
     end
 
     subgraph "Analytics Layer"
-        HOURLY["hourly_sales<br/>- merchant_id<br/>- hour<br/>- date<br/>- revenue<br/>- txn_count<br/>- category_breakdown"]
-        DAILY["daily_sales<br/>- merchant_id<br/>- date<br/>- revenue<br/>- txn_count<br/>- repeat_rate<br/>- top_items"]
+        HOURLY["hourly_sales<br/>- revenue, txn_count<br/>- category_breakdown"]
+        DAILY["daily_sales<br/>- revenue, repeat_rate<br/>- top_items"]
     end
 
-    subgraph "Dashboard Materialized Views"
-        DASHBOARD_HOME["dashboard_home_cache<br/>- merchant_id<br/>- today_revenue<br/>- yesterday_revenue<br/>- weekly_avg<br/>- monthly_target<br/>- cached_at"]
-        CUSTOMER_INSIGHTS["customer_insights<br/>- merchant_id<br/>- repeat_count<br/>- top_customers<br/>- avg_order_value"]
+    subgraph "Cache & Display"
+        CACHE["dashboard_cache<br/>- today_revenue<br/>- weekly_avg<br/>- monthly_target"]
     end
 
     QR_TXN --> HOURLY
-    CATEG --> HOURLY
     HOURLY --> DAILY
-    DAILY --> DASHBOARD_HOME
-    QR_TXN --> CUSTOMER_INSIGHTS
+    DAILY --> CACHE
 
     style QR_TXN fill:#2196F3,color:#fff
     style CATEG fill:#2196F3,color:#fff
     style HOURLY fill:#FFC107,color:#000
     style DAILY fill:#FFC107,color:#000
-    style DASHBOARD_HOME fill:#4CAF50,color:#fff,stroke:#1B5E20,stroke-width:2px
-    style CUSTOMER_INSIGHTS fill:#4CAF50,color:#fff,stroke:#1B5E20,stroke-width:2px
+    style CACHE fill:#4CAF50,color:#fff,stroke:#1B5E20,stroke-width:2px
 ```
 
-### Schema Definition
-
-```sql
--- Raw transaction data
-CREATE TABLE qr_transactions (
-    txn_id VARCHAR(50) PRIMARY KEY,
-    merchant_id VARCHAR(50) NOT NULL,
-    amount BIGINT NOT NULL,  -- in VND
-    timestamp TIMESTAMP NOT NULL,
-    category_id VARCHAR(50),
-    customer_phone VARCHAR(20),
-    payment_method VARCHAR(20),
-    status VARCHAR(20),  -- 'completed', 'pending', 'failed'
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_merchant_timestamp (merchant_id, timestamp),
-    INDEX idx_customer_phone (customer_phone)
-);
-
--- Hourly aggregation (materialized view)
-CREATE TABLE hourly_sales (
-    merchant_id VARCHAR(50),
-    date_hour TIMESTAMP NOT NULL,
-    revenue BIGINT,
-    transaction_count INT,
-    category_breakdown JSON,  -- {"category_id": revenue}
-    repeat_customer_count INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (merchant_id, date_hour)
-);
-
--- Daily dashboard cache
-CREATE TABLE dashboard_daily_cache (
-    merchant_id VARCHAR(50) PRIMARY KEY,
-    date DATE NOT NULL,
-    today_revenue BIGINT,
-    yesterday_revenue BIGINT,
-    week_avg_revenue BIGINT,
-    monthly_target BIGINT,
-    repeat_rate DECIMAL(5,2),  -- 0-100 %
-    top_items JSON,  -- [{item: name, revenue: 1000000}]
-    top_customers JSON,  -- [{phone: "0899xxx", spend: 500000}]
-    cached_at TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-### UI-to-DB Mapping
-
-```mermaid
-graph LR
-    subgraph "Dashboard UI Component"
-        UI["📊 Today Revenue Card<br/>Shows: 4.2M ₫<br/>vs Yesterday: +150K"]
-    end
-
-    subgraph "Data Sources"
-        CACHE["Dashboard Cache<br/>today_revenue = 4,200,000<br/>yesterday_revenue = 4,050,000"]
-        CALC["Calculated<br/>diff = 150,000"]
-    end
-
-    subgraph "SQL Query"
-        QUERY["SELECT<br/>today_revenue,<br/>yesterday_revenue,<br/>FROM dashboard_daily_cache<br/>WHERE merchant_id = ?<br/>AND date = TODAY"]
-    end
-
-    UI -->|"fetches"| CACHE
-    CACHE -->|"from"| QUERY
-    QUERY -->|"reads"| DB["qr_transactions<br/>+ aggregation"]
-
-    style UI fill:#FFC107,color:#000,stroke:#FFA000,stroke-width:2px
-    style CACHE fill:#4CAF50,color:#fff
-    style CALC fill:#4CAF50,color:#fff
-    style QUERY fill:#2196F3,color:#fff
-    style DB fill:#2196F3,color:#fff
-```
+**Key Tables**: `qr_transactions` → `hourly_sales` → `daily_sales` → `dashboard_cache`
 
 ---
 
 ## 4.2 Customer Engagement Platform - Data Schema
 
-### Database Design
-
 ```mermaid
 graph TB
-    subgraph "Customer Master Data"
-        CUST["customers<br/>- customer_id<br/>- merchant_id<br/>- phone<br/>- email<br/>- name (if collected)<br/>- created_at<br/>- last_purchase_date"]
-        SEGMENT["customer_segments<br/>- segment_id<br/>- customer_id<br/>- segment_type<br/>- reason<br/>- created_at"]
+    subgraph "Customer Data"
+        CUST["customers<br/>- customer_id, phone<br/>- merchant_id<br/>- purchase_count"]
+        SEGMENT["customer_segments<br/>- customer_id<br/>- segment_type<br/>(frequent, at_risk, vip)"]
     end
 
-    subgraph "Purchase History"
-        HISTORY["customer_purchases<br/>- purchase_id<br/>- customer_id<br/>- merchant_id<br/>- amount<br/>- date<br/>- items<br/>- payment_method"]
-    end
-
-    subgraph "Campaign Data"
-        CAMPAIGN["sms_campaigns<br/>- campaign_id<br/>- merchant_id<br/>- name<br/>- target_segment<br/>- message<br/>- sent_at<br/>- status"]
-        DELIVERY["campaign_delivery<br/>- delivery_id<br/>- campaign_id<br/>- customer_id<br/>- phone<br/>- status<br/>- delivered_at<br/>- read_at<br/>- clicked_at"]
+    subgraph "Campaign Execution"
+        CAMPAIGN["sms_campaigns<br/>- campaign_id<br/>- message, status"]
+        DELIVERY["campaign_delivery<br/>- delivery_id<br/>- status, read_at<br/>- clicked_at"]
     end
 
     subgraph "Analytics"
-        ANALYTICS["campaign_analytics<br/>- campaign_id<br/>- sent_count<br/>- delivered_count<br/>- open_rate<br/>- click_rate<br/>- conversion_count<br/>- revenue_generated"]
+        METRICS["campaign_metrics<br/>- open_rate, click_rate<br/>- conversion_count<br/>- roi_percent"]
     end
 
-    HISTORY --> CUST
     CUST --> SEGMENT
     SEGMENT --> CAMPAIGN
     CAMPAIGN --> DELIVERY
-    DELIVERY --> ANALYTICS
+    DELIVERY --> METRICS
 
-    style CUST fill:#2196F3,color:#fff,stroke:#0D47A1,stroke-width:2px
+    style CUST fill:#2196F3,color:#fff
     style SEGMENT fill:#2196F3,color:#fff
-    style HISTORY fill:#00BCD4,color:#000
     style CAMPAIGN fill:#4CAF50,color:#fff
     style DELIVERY fill:#4CAF50,color:#fff
-    style ANALYTICS fill:#9C27B0,color:#fff
+    style METRICS fill:#9C27B0,color:#fff,stroke:#6A1B9A,stroke-width:2px
 ```
 
-### Schema SQL
-
-```sql
--- Customer master table
-CREATE TABLE customers (
-    customer_id VARCHAR(50) PRIMARY KEY,
-    merchant_id VARCHAR(50) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    email VARCHAR(100),
-    customer_name VARCHAR(100),
-    created_at TIMESTAMP,
-    last_purchase_date DATE,
-    total_purchases INT DEFAULT 0,
-    total_spend BIGINT DEFAULT 0,
-    frequency_score INT,  -- 0-100, how often they buy
-    INDEX idx_merchant_phone (merchant_id, phone),
-    INDEX idx_last_purchase (merchant_id, last_purchase_date)
-);
-
--- Customer segments (e.g., "frequent_buyer", "at_risk", "vip")
-CREATE TABLE customer_segments (
-    segment_id VARCHAR(50) PRIMARY KEY,
-    customer_id VARCHAR(50) NOT NULL,
-    merchant_id VARCHAR(50),
-    segment_type VARCHAR(50),  -- 'frequent', 'at_risk', 'vip', 'new'
-    calculated_date DATE,
-    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
-);
-
--- SMS campaign table
-CREATE TABLE sms_campaigns (
-    campaign_id VARCHAR(50) PRIMARY KEY,
-    merchant_id VARCHAR(50) NOT NULL,
-    campaign_name VARCHAR(200),
-    message_template TEXT,
-    target_segment VARCHAR(50),
-    sent_at TIMESTAMP,
-    scheduled_for TIMESTAMP,
-    status VARCHAR(20),  -- 'draft', 'scheduled', 'sent', 'completed'
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    INDEX idx_merchant_status (merchant_id, status)
-);
-
--- Campaign delivery log
-CREATE TABLE campaign_delivery (
-    delivery_id VARCHAR(50) PRIMARY KEY,
-    campaign_id VARCHAR(50) NOT NULL,
-    customer_id VARCHAR(50) NOT NULL,
-    phone_number VARCHAR(20),
-    message_text TEXT,
-    status VARCHAR(20),  -- 'pending', 'sent', 'delivered', 'failed'
-    sent_at TIMESTAMP,
-    delivered_at TIMESTAMP,
-    read_at TIMESTAMP,
-    clicked_at TIMESTAMP,
-    click_url VARCHAR(500),
-    INDEX idx_campaign_customer (campaign_id, customer_id),
-    FOREIGN KEY (campaign_id) REFERENCES sms_campaigns(campaign_id)
-);
-
--- Campaign metrics (aggregated for fast analytics)
-CREATE TABLE campaign_metrics (
-    campaign_id VARCHAR(50) PRIMARY KEY,
-    sent_count INT,
-    delivered_count INT,
-    failed_count INT,
-    open_rate DECIMAL(5,2),  -- 0-100 %
-    click_rate DECIMAL(5,2),
-    conversion_count INT,
-    revenue_generated BIGINT,
-    cost_per_sms INT,  -- 500 VND typically
-    roi_percent DECIMAL(6,2),
-    updated_at TIMESTAMP
-);
-```
-
-### UI Component to DB Mapping
-
-```
-┌─ SMS Campaign Builder UI ──────────┐
-│ Target: [Frequent Buyers]          │
-│ -> SELECT customers FROM customer_segments
-│    WHERE segment_type = 'frequent'
-│    AND merchant_id = '12345'
-│    -> Returns: 250 customers
-│
-│ Message: "Hi {name}, come back..."
-│ -> INSERT INTO sms_campaigns (...)
-│    INSERT INTO campaign_delivery (...)
-│    -> campaign_id = 'camp_001'
-│
-│ Cost: 250 SMS x 500₫ = 125K₫
-│ -> Calculate from: SELECT COUNT(*) * 500
-│    FROM customers WHERE segment_type = 'frequent'
-└────────────────────────────────────┘
-
-┌─ Campaign Analytics UI ────────────┐
-│ Shows:                              │
-│ - Sent: 250                         │
-│ - Delivered: 248 (99.2%)            │
-│ - Open: 78 (31.4%)                  │
-│ - Click: 32 (12.9%)                 │
-│ - ROI: 188%                         │
-│ -> SELECT sent_count, delivered_count,
-│           open_rate, click_rate, roi_percent
-│    FROM campaign_metrics
-│    WHERE campaign_id = 'camp_001'
-└────────────────────────────────────┘
-```
+**Key Tables**: `customers` → `customer_segments` → `sms_campaigns` → `campaign_delivery` → `campaign_metrics`
 
 ---
 
 ## 4.3 E-Invoice & Compliance - Data Schema
 
-### Database Design
-
 ```mermaid
 graph TB
-    subgraph "Transaction Base"
-        TXN["qr_transactions<br/>(reused from dashboard)"]
+    subgraph "Transaction"
+        TXN["qr_transactions<br/>(from dashboard)"]
     end
 
-    subgraph "Invoice Generation"
-        INV["invoices<br/>- invoice_id<br/>- merchant_id<br/>- txn_id<br/>- amount<br/>- tax_amount<br/>- total<br/>- invoice_date<br/>- issue_date<br/>- status"]
+    subgraph "Invoice"
+        INV["invoices<br/>- invoice_id<br/>- amount, tax_amount<br/>- status"]
     end
 
-    subgraph "Tax Calculation"
-        TAX["invoice_tax_detail<br/>- invoice_id<br/>- category<br/>- revenue<br/>- tax_rate<br/>- tax_amount"]
+    subgraph "Tax & Filing"
+        TAX["invoice_tax_detail<br/>- tax_rate, tax_amount"]
+        FILING["tax_monthly_summary<br/>- total_revenue<br/>- total_tax<br/>- filing_status"]
     end
 
-    subgraph "Government Submission"
-        GOV["govt_submission_log<br/>- submission_id<br/>- merchant_id<br/>- month<br/>- total_revenue<br/>- total_tax<br/>- submitted_at<br/>- response_status<br/>- reference_no"]
+    subgraph "Compliance"
+        GOV["govt_submission_log<br/>- submitted_at<br/>- reference_no"]
     end
 
     TXN --> INV
     INV --> TAX
-    TAX --> GOV
+    TAX --> FILING
+    FILING --> GOV
 
     style TXN fill:#2196F3,color:#fff
     style INV fill:#FF1744,color:#fff,stroke:#C00,stroke-width:2px
     style TAX fill:#FFC107,color:#000
+    style FILING fill:#FFC107,color:#000
     style GOV fill:#4CAF50,color:#fff
 ```
 
-### Schema SQL
-
-```sql
--- Invoice table
-CREATE TABLE invoices (
-    invoice_id VARCHAR(50) PRIMARY KEY,
-    merchant_id VARCHAR(50) NOT NULL,
-    txn_id VARCHAR(50) NOT NULL,
-    invoice_number VARCHAR(20),  -- MOM-2025-07-0001
-    invoice_date DATE NOT NULL,
-    issue_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    total_amount BIGINT NOT NULL,  -- in VND
-    tax_amount BIGINT,
-    tax_rate DECIMAL(5,2),
-    total_with_tax BIGINT,
-    customer_phone VARCHAR(20),
-    customer_name VARCHAR(100),
-    status VARCHAR(20),  -- 'draft', 'issued', 'submitted', 'acknowledged'
-    submitted_to_govt TIMESTAMP,
-    govt_reference_no VARCHAR(50),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_merchant_month (merchant_id, invoice_date)
-);
-
--- Tax detail per invoice
-CREATE TABLE invoice_tax_details (
-    detail_id VARCHAR(50) PRIMARY KEY,
-    invoice_id VARCHAR(50) NOT NULL,
-    category_id VARCHAR(50),
-    revenue BIGINT,
-    tax_rate DECIMAL(5,2),  -- e.g., 10.0 for 10%
-    tax_amount BIGINT,
-    FOREIGN KEY (invoice_id) REFERENCES invoices(invoice_id)
-);
-
--- Monthly tax summary for filing
-CREATE TABLE tax_monthly_summary (
-    summary_id VARCHAR(50) PRIMARY KEY,
-    merchant_id VARCHAR(50) NOT NULL,
-    year INT,
-    month INT,
-    total_revenue BIGINT,
-    total_tax BIGINT,
-    invoice_count INT,
-    status VARCHAR(20),  -- 'calculated', 'filed', 'acknowledged'
-    filed_at TIMESTAMP,
-    govt_response TIMESTAMP,
-    filing_reference_no VARCHAR(50),
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    UNIQUE KEY (merchant_id, year, month)
-);
-
--- Government submission log
-CREATE TABLE govt_submission_log (
-    submission_id VARCHAR(50) PRIMARY KEY,
-    merchant_id VARCHAR(50) NOT NULL,
-    month INT,
-    year INT,
-    total_invoices INT,
-    total_revenue BIGINT,
-    total_tax BIGINT,
-    submitted_at TIMESTAMP,
-    response_status VARCHAR(20),  -- 'pending', 'accepted', 'rejected'
-    response_message TEXT,
-    govt_reference_no VARCHAR(100),
-    created_at TIMESTAMP
-);
-```
-
-### Sample Data Mapping: Invoice Generation
-
-```sql
--- When merchant receives QR payment
-INSERT INTO qr_transactions VALUES (
-    'txn_12345',
-    'merchant_789',
-    100000,  -- 100K VND
-    '2025-07-10 14:23:45',
-    'category_food',
-    '0899123456',
-    'qr_dynamic',
-    'completed'
-);
-
--- Auto-generate invoice (backend process < 5 sec)
-INSERT INTO invoices VALUES (
-    'inv_001',
-    'merchant_789',
-    'txn_12345',
-    'MOM-2025-07-0001',
-    '2025-07-10',
-    CURRENT_TIMESTAMP,
-    100000,
-    10000,  -- 10% tax
-    10.0,
-    110000,
-    '0899123456',
-    'Nguyễn Văn A',  -- if captured
-    'issued',
-    CURRENT_TIMESTAMP,
-    'MOMO-EVT-2025-07-0001'
-);
-
--- Insert tax detail
-INSERT INTO invoice_tax_details VALUES (
-    'tax_001',
-    'inv_001',
-    'category_food',
-    100000,
-    10.0,
-    10000
-);
-
--- Update monthly summary
-UPDATE tax_monthly_summary SET
-    total_revenue = total_revenue + 100000,
-    total_tax = total_tax + 10000,
-    invoice_count = invoice_count + 1,
-    updated_at = CURRENT_TIMESTAMP
-WHERE merchant_id = 'merchant_789'
-  AND year = 2025
-  AND month = 7;
-```
+**Key Tables**: `qr_transactions` → `invoices` → `invoice_tax_details` → `tax_monthly_summary` → `govt_submission_log`
 
 ---
 
@@ -1197,36 +880,35 @@ WHERE merchant_id = 'merchant_789'
 
 ```mermaid
 graph TB
-    subgraph "1. Customer Payment"
-        A["👤 Customer pays<br/>100K at QR"]
-        A -->|"triggers"| B["🔌 QR Event<br/>txn_id, amount,<br/>timestamp, category"]
+    subgraph "1. QR Payment"
+        A["👤 Customer pays 100K"]
     end
 
-    subgraph "2. Data Ingestion"
-        B -->|"streamed to"| C["📥 Real-time Pipeline<br/>Kafka/Kinesis"]
-        C -->|"1 min later"| D["💾 Raw DB<br/>qr_transactions"]
+    subgraph "2. Data Pipeline"
+        B["🔌 Event triggered"]
+        C["📥 Streaming pipeline"]
+        D["💾 Raw DB"]
     end
 
-    subgraph "3. Analytics Processing"
-        D -->|"hourly agg"| E["⏰ Hourly Sales<br/>hourly_sales table"]
-        D -->|"daily agg"| F["📅 Daily Cache<br/>dashboard_daily_cache"]
+    subgraph "3. Aggregation"
+        E["⏰ Hourly aggregation"]
+        F["📅 Daily cache"]
     end
 
-    subgraph "4. Dashboard Display"
-        F -->|"API call<br/>< 100ms"| G["🏪 Dashboard<br/>Shows 4.2M revenue"]
+    subgraph "4. Display & Actions"
+        G["🏪 Dashboard view"]
+        H["📋 Invoice generation"]
+        I["📱 Customer engagement"]
     end
 
-    subgraph "5. Invoice Generation"
-        D -->|"< 5 sec"| H["📋 Auto Invoice<br/>invoices table"]
-        H -->|"submit"| I["🏛️ Govt eInvoice<br/>Portal"]
-    end
-
-    subgraph "6. Customer Engagement"
-        D -->|"extract phone"| J["📱 Customer DB<br/>customers table"]
-        J -->|"segment"| K["🎯 Segments<br/>frequent_buyer"]
-        K -->|"campaign"| L["📬 SMS Send<br/>delivery log"]
-        L -->|"track"| M["📊 Analytics<br/>campaign_metrics"]
-    end
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    D --> H
+    D --> I
 
     style A fill:#FFC107,color:#000
     style B fill:#FF9800,color:#fff
@@ -1236,89 +918,20 @@ graph TB
     style F fill:#4CAF50,color:#fff
     style G fill:#4CAF50,color:#fff,stroke:#1B5E20,stroke-width:2px
     style H fill:#FF1744,color:#fff
-    style I fill:#FF1744,color:#fff
-    style J fill:#9C27B0,color:#fff
-    style K fill:#9C27B0,color:#fff
-    style L fill:#9C27B0,color:#fff
-    style M fill:#9C27B0,color:#fff
+    style I fill:#9C27B0,color:#fff
 ```
+
+**Flow**: QR Payment → Event Stream → Raw DB → Hourly/Daily Aggregation → Dashboard/Invoice/Engagement
 
 ---
 
-## 4.5 API Contracts (Product Team View)
+## 4.5 API Contracts (Summary)
 
-### Dashboard API
-
-```json
-{
-  "endpoint": "GET /v1/merchant/dashboard/home",
-  "description": "Get today's dashboard summary",
-  "request": {
-    "merchant_id": "string (required)",
-    "date": "YYYY-MM-DD (optional, default today)"
-  },
-  "response": {
-    "today_revenue": 4200000,
-    "yesterday_revenue": 4050000,
-    "weekly_avg": 4100000,
-    "monthly_target": 5000000,
-    "target_progress_percent": 84,
-    "repeat_rate": 35,
-    "top_items": [
-      {"name": "Bún phở", "revenue": 1800000, "percent": 43},
-      {"name": "Egg roll", "revenue": 900000, "percent": 21}
-    ],
-    "top_customers": [
-      {"phone": "0899123456", "name": "Nguyễn A", "purchases": 45, "total_spend": 2300000}
-    ],
-    "cached_at": "2025-07-14T14:00:00Z"
-  }
-}
-```
-
-### SMS Campaign API
-
-```json
-{
-  "endpoint": "POST /v1/merchant/campaigns/sms/send",
-  "description": "Send SMS campaign to customer segment",
-  "request": {
-    "merchant_id": "string",
-    "campaign_name": "Comeback20 Sale",
-    "segment_type": "frequent_buyers",
-    "message_template": "Hi {name}, come back for 20% off!",
-    "scheduled_for": "2025-07-14T14:00:00Z"
-  },
-  "response": {
-    "campaign_id": "camp_12345",
-    "target_count": 250,
-    "status": "scheduled",
-    "cost_vnd": 125000,
-    "scheduled_at": "2025-07-14T14:00:00Z"
-  }
-}
-```
-
-### Invoice Generation API
-
-```json
-{
-  "endpoint": "POST /v1/merchant/invoices/generate",
-  "description": "Auto-generate invoice from QR transaction (internal)",
-  "request": {
-    "txn_id": "txn_12345",
-    "merchant_id": "merchant_789",
-    "amount": 100000
-  },
-  "response": {
-    "invoice_id": "inv_001",
-    "invoice_number": "MOM-2025-07-0001",
-    "status": "issued",
-    "submitted_to_govt": true,
-    "govt_reference": "MOMO-EVT-2025-07-0001"
-  }
-}
-```
+| Endpoint | Method | Purpose | Response |
+|----------|--------|---------|----------|
+| `/dashboard/home` | GET | Today's revenue & analytics | `{today_revenue, weekly_avg, target_progress}` |
+| `/campaigns/sms/send` | POST | Send SMS to segment | `{campaign_id, target_count, cost_vnd}` |
+| `/invoices/generate` | POST | Auto-generate invoice | `{invoice_id, invoice_number, status}` |
 
 ---
 
@@ -1326,27 +939,27 @@ graph TB
 
 ```mermaid
 graph TB
-    subgraph "Dashboard Components"
-        C1["KPI Card<br/>Revenue/Target<br/>Comparison metric"]
-        C2["Line Chart<br/>7-day trend<br/>Interactive"]
-        C3["Category Grid<br/>Item breakdown<br/>Top performers"]
-        C4["Customer List<br/>Top buyers<br/>Phone/spend"]
+    subgraph "Dashboard"
+        C1["KPI Card"]
+        C2["Trend Chart"]
+        C3["Category Grid"]
+        C4["Customer List"]
     end
 
-    subgraph "Campaign Components"
-        C5["Segment Selector<br/>Dropdown<br/>Count display"]
-        C6["Message Editor<br/>Text input<br/>Char counter"]
-        C7["Schedule Picker<br/>Date + Time<br/>TZ aware"]
-        C8["Cost Calculator<br/>Real-time<br/>ROI projection"]
+    subgraph "Campaigns"
+        C5["Segment Selector"]
+        C6["Message Editor"]
+        C7["Schedule Picker"]
+        C8["Cost Calculator"]
     end
 
-    subgraph "Invoice Components"
-        C9["Invoice Card<br/>Display<br/>Status badge"]
-        C10["Tax Summary<br/>Breakdown<br/>Calculation"]
-        C11["Filing Wizard<br/>Step indicator<br/>Form fields"]
+    subgraph "Invoicing"
+        C9["Invoice Card"]
+        C10["Tax Summary"]
+        C11["Filing Wizard"]
     end
 
-    subgraph "Shared Components"
+    subgraph "Shared"
         SHARED["Modal, Button,<br/>Input, Dropdown,<br/>Table, Toast"]
     end
 

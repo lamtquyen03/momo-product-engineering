@@ -44,6 +44,16 @@ flowchart TB
     style S fill:#03A9F4,color:#fff,stroke:#0277BD
 ```
 
+### Visual references from the MoMo experience
+
+These screenshots are included to help readers quickly connect the product domains to the actual MoMo app experience.
+
+![MoMo homepage overview](assets/momo-home.png)
+
+![MoMo service categories and financial services](assets/momo-services.png)
+
+![MoMo news and promotional experience](assets/momo-news.png)
+
 ---
 
 ## 🎯 Strategic Product Domains

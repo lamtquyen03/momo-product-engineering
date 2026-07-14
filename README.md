@@ -8,74 +8,40 @@ A comprehensive product documentation repository for MoMo, Vietnam's leading fin
 
 ## 📊 Product Overview
 
+The overview is split into two smaller views so the product map is easier to scan on GitHub and on narrower screens.
+
 ```mermaid
-graph TB
-    subgraph "MoMo - Trợ Thủ Tài Chính Với AI"
-        A["🎯 Core Mission<br/>Help users do more with money<br/>through AI-powered financial assistance"]
-    end
+flowchart TB
+    A["🎯 Core Mission<br/>Help users do more with money<br/>through AI-powered financial assistance"]
+    P["💳 Payment & Transfer<br/>Wallet, PayLater, Cash Flow"]
+    F["💰 Financial Services<br/>Investment, Insurance, Lending"]
+    L["🎬 Lifestyle & Utilities<br/>Entertainment, Travel, Utilities"]
 
-    subgraph "Payment & Transfer"
-        P1["💳 Wallet & Payment<br/>- E-wallet<br/>- QR Payment<br/>- Fund Transfer"]
-        P2["⏰ PayLater<br/>- Instant Credit<br/>- Shopping Credit<br/>- Bill Payment"]
-        P3["🏧 Cash Flow<br/>- Cash-in/out<br/>- Bank Link<br/>- Open Banking"]
-    end
-
-    subgraph "Financial Services"
-        F1["💰 Investment<br/>- Funds<br/>- Stocks<br/>- Bonds"]
-        F2["🛡️ Insurance<br/>- Auto Insurance<br/>- Health Insurance<br/>- Property Ins."]
-        F3["💸 Lending<br/>- Quick Loans<br/>- CreditTech<br/>- Merchant Loans"]
-    end
-
-    subgraph "Lifestyle & Utilities"
-        L1["🎬 Entertainment<br/>- Movie Tickets<br/>- Games<br/>- Apps"]
-        L2["🚗 Travel & Transport<br/>- Bus Tickets<br/>- Flight Booking<br/>- Ride Sharing"]
-        L3["📱 Utilities<br/>- Phone Recharge<br/>- Data 4G/5G<br/>- Bill Payment"]
-    end
-
-    subgraph "Business Solutions"
-        B1["🏪 Merchant Tools<br/>- Soundbox<br/>- QR Payment<br/>- EDC/Card"]
-        B2["🤖 Moni Merchant<br/>- Business AI Assistant<br/>- Revenue Tracking<br/>- Compliance Support"]
-        B3["📊 Business Analytics<br/>- Dashboard<br/>- Reports<br/>- Insights"]
-    end
-
-    subgraph "Growth & Discovery"
-        G1["🔍 Discovery Platform<br/>- Homescreen<br/>- Search<br/>- Recommendations"]
-        G2["🎁 Loyalty & Rewards<br/>- MoMo Xu Points<br/>- Promotions<br/>- Rewards"]
-        G3["🤝 Growth Loops<br/>- Referral<br/>- Cross-sell<br/>- Retention"]
-    end
-
-    A --> P1
-    A --> P2
-    A --> P3
-    A --> F1
-    A --> F2
-    A --> F3
-    A --> L1
-    A --> L2
-    A --> L3
-    A --> B1
-    A --> B2
-    A --> B3
-    A --> G1
-    A --> G2
-    A --> G3
+    A --> P
+    A --> F
+    A --> L
 
     style A fill:#FF1744,color:#fff,stroke:#C00,stroke-width:3px
-    style P1 fill:#00BCD4,color:#000,stroke:#0097A7
-    style P2 fill:#00BCD4,color:#000,stroke:#0097A7
-    style P3 fill:#00BCD4,color:#000,stroke:#0097A7
-    style F1 fill:#FF9800,color:#fff,stroke:#E65100
-    style F2 fill:#FF9800,color:#fff,stroke:#E65100
-    style F3 fill:#FF9800,color:#fff,stroke:#E65100
-    style L1 fill:#4CAF50,color:#fff,stroke:#2E7D32
-    style L2 fill:#4CAF50,color:#fff,stroke:#2E7D32
-    style L3 fill:#4CAF50,color:#fff,stroke:#2E7D32
-    style B1 fill:#9C27B0,color:#fff,stroke:#6A1B9A
-    style B2 fill:#9C27B0,color:#fff,stroke:#6A1B9A
-    style B3 fill:#9C27B0,color:#fff,stroke:#6A1B9A
-    style G1 fill:#FFC107,color:#000,stroke:#FFA000
-    style G2 fill:#FFC107,color:#000,stroke:#FFA000
-    style G3 fill:#FFC107,color:#000,stroke:#FFA000
+    style P fill:#00BCD4,color:#000,stroke:#0097A7
+    style F fill:#FF9800,color:#fff,stroke:#E65100
+    style L fill:#4CAF50,color:#fff,stroke:#2E7D32
+```
+
+```mermaid
+flowchart TB
+    A["🎯 Core Mission<br/>Help users do more with money<br/>through AI-powered financial assistance"]
+    B["🏪 Business Solutions<br/>Merchant tools, Moni, Analytics"]
+    G["🔍 Growth & Discovery<br/>Search, Rewards, Referrals"]
+    S["🛡️ Security & Compliance<br/>eKYC, Risk, Compliance"]
+
+    A --> B
+    A --> G
+    A --> S
+
+    style A fill:#FF1744,color:#fff,stroke:#C00,stroke-width:3px
+    style B fill:#9C27B0,color:#fff,stroke:#6A1B9A
+    style G fill:#FFC107,color:#000,stroke:#FFA000
+    style S fill:#03A9F4,color:#fff,stroke:#0277BD
 ```
 
 ---

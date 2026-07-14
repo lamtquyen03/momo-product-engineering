@@ -1,0 +1,72 @@
+# MoMo Product Engineering - Git Ignore
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+
+# Node & Package Management
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+
+# Temporary Files
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+
+# Credentials (Never commit)
+.env
+.env.local
+credentials.json
+api_keys.json
+
+# Build Outputs
+/build
+/dist
+*.min.js
+*.min.css
+
+# Local Testing
+test-results/
+coverage/
+
+# Figma Files (export only, not source)
+*.figma
+
+# Data Files (if any)
+*.csv
+*.xlsx
+*.db
+data/
+
+# Archives
+*.zip
+*.tar
+*.tar.gz

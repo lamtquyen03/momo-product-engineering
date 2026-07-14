@@ -52,8 +52,6 @@ These screenshots are included to help readers quickly connect the product domai
 
 ![MoMo service categories and financial services](assets/momo-services.png)
 
-![MoMo news and promotional experience](assets/momo-news.png)
-
 ---
 
 ## 🎯 Strategic Product Domains

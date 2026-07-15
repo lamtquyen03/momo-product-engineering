@@ -254,7 +254,113 @@ graph LR
 
 ---
 
-## 5. Roadmap triển khai
+## 5. JD Mapping & Interview Prep
+
+### 5.1 Product lens cho JD này
+
+```mermaid
+flowchart TB
+    A["Pain point<br/>merchant lo lắng về tiền"] --> B["Trust + Proof"]
+    B --> C["Reconcile minh bạch"]
+    B --> D["Hiểu doanh thu bằng ngôn ngữ đơn giản"]
+    B --> E["AI Moni hỗ trợ quyết định"]
+    C --> F["Peace of mind"]
+    D --> F
+    E --> F
+
+    style A fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+    style B fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px
+    style C fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    style D fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    style E fill:#E0F7FA,stroke:#00838F,stroke-width:2px
+    style F fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+```
+
+### 5.2 Merchant journey nhanh
+
+```mermaid
+flowchart LR
+    A["Khách hàng thanh toán"] --> B["Giao dịch vào hệ thống"]
+    B --> C["Sổ Thu Chi / Widget Home"]
+    C --> D["Merchant thấy rõ doanh thu"]
+    D --> E["Tăng trust + quay lại dùng"]
+    E --> F["Mở rộng bán hàng & tiếp cận vốn"]
+
+    style A fill:#FFF8E1,stroke:#F9A825,stroke-width:2px
+    style B fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+    style C fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    style D fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    style E fill:#E0F7FA,stroke:#00838F,stroke-width:2px
+    style F fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+```
+
+### 5.3 Metrics loop cho sản phẩm
+
+```mermaid
+flowchart TB
+    A["Engagement"] --> B["Retention"]
+    B --> C["Conversion"]
+    C --> D["Monetization"]
+    D --> E["Merchant trust"]
+    E --> A
+
+    style A fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+    style B fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    style C fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px
+    style D fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    style E fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+```
+
+### 5.4 Cross-functional execution
+
+```mermaid
+graph LR
+    P["Product"] --> E["Engineering"]
+    P --> D["Data"]
+    P --> A["AI"]
+    P --> X["Design"]
+    P --> O["Operations"]
+    E --> R["Release"]
+    D --> R
+    A --> R
+    X --> R
+    O --> R
+
+    style P fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+    style E fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    style D fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px
+    style A fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    style X fill:#E0F7FA,stroke:#00838F,stroke-width:2px
+    style O fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    style R fill:#FCE4EC,stroke:#C2185B,stroke-width:2px
+```
+
+### 5.5 Short concise Q&A for interview
+
+- Q: What is this JD about?  
+  A: Build merchant-first products that help SMEs trust their cash flow, understand their business, and grow through better insights and AI assistance.
+
+- Q: Why is merchant engagement important?  
+  A: Because merchants need confidence, not just features. If they trust the product, they will use it more often and stay longer.
+
+- Q: How would you approach user research?  
+  A: Start with field interviews, observe older and less tech-savvy merchants, and turn their language into clear user stories.
+
+- Q: What metrics matter most?  
+  A: Engagement, retention, conversion, revenue impact, and stability after release.
+
+- Q: How would you prioritize features?  
+  A: Use Jobs-to-be-Done: solve trust + proof first, then simplify the experience and remove friction.
+
+- Q: What role does AI play?  
+  A: AI should make work easier, not more complicated. Moni should help merchants act faster with simple and useful suggestions.
+
+- Q: What makes a good product trainee here?  
+  A: Curiosity, proactivity, empathy for merchants, strong communication, and ability to turn data into action.
+
+---
+
+## 6. Roadmap triển khai
 
 ```mermaid
 timeline
@@ -280,6 +386,6 @@ timeline
 
 ---
 
-**Phiên bản**: 2.0  
+**Phiên bản**: 2.1  
 **Ngày cập nhật**: 15/07/2026  
-**Trạng thái**: Sẵn sàng cho kickoff engineering
+**Trạng thái**: Sẵn sàng cho kickoff engineering và phỏng vấn

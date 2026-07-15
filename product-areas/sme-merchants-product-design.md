@@ -1,1035 +1,285 @@
-# 🏪 SME Payment & Business Solutions - Product Design Guide
+﻿# Thiết kế sản phẩm SME Merchants – MoMo
 
-**Focus Area**: Merchant Engagement & Monetization  
-**Product Manager Role**: Manager - New Business and Product Development (SME Merchants)  
-**Market**: SMEs, Small Merchants, Household Businesses in Vietnam  
-**Mission**: Build 0→1 products that help merchants go beyond payments to manage, grow, and scale their business
+## 1. Yêu cầu nghiệp vụ
+
+### 1.1 Vấn đề cần giải quyết
+Các merchant SME thường gặp ba rào cản chính: thiếu dữ liệu bán hàng theo thời gian thực, khó tiếp cận khách hàng mới và phải xử lý thủ công các công việc thuế, hóa đơn và chăm sóc khách hàng. MoMo cần cung cấp một bộ giải pháp giúp merchant tăng doanh thu, tối ưu chi phí marketing và giảm thao tác vận hành.
+
+### 1.2 Đối tượng sử dụng chính
+- Cửa hàng nhỏ / quán ăn / tiệm tiện lợi
+- Chủ shop bán lẻ có ít nhân sự
+- Merchant đang muốn mở rộng khách hàng mới và tăng tần suất mua hàng
+
+### 1.3 Mục tiêu sản phẩm
+- Tăng doanh thu trung bình trên mỗi merchant
+- Giảm thời gian kiểm tra bán hàng và theo dõi hiệu quả
+- Tự động tạo hóa đơn điện tử và nộp thuế đúng quy định
+- Tối ưu chi phí marketing bằng Facebook Ads và Google Ads thay vì chỉ phụ thuộc vào SMS
+
+### 1.4 KPI trọng tâm
+| KPI | Mục tiêu |
+|---|---:|
+| Doanh thu/ngày | +15% trong 90 ngày |
+| Tỷ lệ khách hàng quay lại | +10% |
+| Chi phí thu hút khách hàng | Giảm 20% |
+| Tỷ lệ hóa đơn tự động hóa | 90% |
+| Tỷ lệ merchant active | 80% trong 30 ngày |
+
+```mermaid
+flowchart LR
+    A[Merchant SME] --> B[Dashboard bán hàng]
+    A --> C[Marketing Growth]
+    A --> D[Hóa đơn & Thuế]
+    B --> E[Doanh thu + phân tích]
+    C --> F[Facebook Ads + Google Ads]
+    D --> G[Nộp hồ sơ điện tử]
+```
 
 ---
 
-## 📋 Table of Contents
+## 2. Thiết kế sản phẩm
 
-1. [Business Requirements](#business-requirements)
-2. [Product Design Architecture](#product-design-architecture)
-3. [Product Samples & UX/UI Artifacts](#product-samples--uxui-artifacts)
-4. [Data Schema & UI Mapping](#data-schema--ui-mapping)
+### 2.1 Bộ sản phẩm cốt lõi
 
----
+#### A. Merchant Dashboard
+- Tổng quan doanh thu hôm nay, tuần, tháng
+- Phân tích theo giờ, nhóm hàng và khách hàng
+- Cảnh báo mục tiêu chưa đạt
 
----
+#### B. Growth Marketing Suite
+- Tạo chiến dịch quảng cáo trên Facebook Ads và Google Ads
+- Theo dõi ROI, CPA, conversion và tỉ lệ quay lại
+- Chọn đối tượng phù hợp theo khu vực, ngành hàng và hành vi mua
 
-# 1. BUSINESS REQUIREMENTS
+#### C. E-Invoice & Compliance
+- Tự động sinh hóa đơn từ giao dịch QR
+- Tính thuế và chuẩn bị hồ sơ nộp cho cơ quan thuế
+- Ghi nhận trạng thái nộp và mã tham chiếu
 
-## 1.1 Market Opportunity & Context
-
-```mermaid
-graph TB
-    subgraph "Current MoMo Position"
-        A["🏪 1M+ Active Merchants"]
-        B["💳 QR Payment Platform<br/>Strong PMF"]
-        C["🔊 Soundbox<br/>200K devices"]
-        D["📊 Transaction Data<br/>Rich behavioral insights"]
-    end
-
-    subgraph "Market Gap"
-        E["❌ No sales management<br/>Merchants use paper/Excel"]
-        F["❌ No customer CRM<br/>Can't track repeat buyers"]
-        G["❌ No financing<br/>Lack working capital"]
-        H["❌ No compliance<br/>Manual tax/invoice"]
-    end
-
-    subgraph "Competitive Threat"
-        I["⚠️ Competitors replicating<br/>payments fast"]
-        J["⚠️ Merchant churn risk<br/>switching to rivals"]
-        K["⚠️ Commoditization<br/>of QR/hardware"]
-    end
-
-    A --> E
-    B --> F
-    C --> G
-    D --> H
-    
-    E --> I
-    F --> J
-    G --> K
-    H --> K
-
-    style A fill:#FF1744,color:#fff
-    style B fill:#FF1744,color:#fff
-    style C fill:#FF1744,color:#fff
-    style D fill:#FF1744,color:#fff
-    style E fill:#FF9800,color:#fff
-    style F fill:#FF9800,color:#fff
-    style G fill:#FF9800,color:#fff
-    style H fill:#FF9800,color:#fff
-    style I fill:#E53935,color:#fff
-    style J fill:#E53935,color:#fff
-    style K fill:#E53935,color:#fff
-```
-
-## 1.2 Business Objectives (0→1 Phase)
-
-```mermaid
-graph LR
-    A["🎯 Retention Moat<br/>Lock-in beyond payments<br/>+3 products = 80% LTV"] -->|"builds"| B["💰 Revenue Expansion<br/>Fintech + SaaS revenue<br/>30% incremental margin"]
-    
-    B -->|"drives"| C["🏆 Market Leadership<br/>MoMo = Merchant OS<br/>not just payment processor"]
-
-    C -->|"enables"| D["🌍 Regional Expansion<br/>Repeat playbook<br/>Southeast Asia"]
-
-    style A fill:#FF1744,color:#fff,stroke:#C00,stroke-width:2px
-    style B fill:#2196F3,color:#fff
-    style C fill:#4CAF50,color:#fff
-    style D fill:#9C27B0,color:#fff
-```
-
-## 1.3 Merchant Personas & Pain Points
-
-### Persona A: 🍜 Street Food Vendor
-
-```mermaid
-graph TB
-    subgraph "Demographics"
-        D["📍 Ho Chi Minh City<br/>💰 Daily revenue: 2-5M₫<br/>👥 Team: Self-run<br/>📱 Smartphone literate"]
-    end
-
-    subgraph "Pain Points"
-        P1["📊 Can't track who buys<br/>Lost repeat customer data"]
-        P2["💳 Daily cash management<br/>Worried about losses"]
-        P3["📋 No business records<br/>Tax/compliance confusion"]
-        P4["💸 Need short-term loan<br/>For supplies/expansion"]
-    end
-
-    subgraph "Needs"
-        N1["Simple daily sales log<br/>No Excel skills needed"]
-        N2["Customer phone collection<br/>For SMS promotions"]
-        N3["Auto tax calculation<br/>Easy filing"]
-        N4["Micro-loan: 2-5M₫<br/>5-7 days repayment"]
-    end
-
-    D --> P1
-    P1 --> N1
-    D --> P2
-    P2 --> N2
-    D --> P3
-    P3 --> N3
-    D --> P4
-    P4 --> N4
-
-    style D fill:#FFC107,color:#000
-    style P1 fill:#FF9800,color:#fff
-    style P2 fill:#FF9800,color:#fff
-    style P3 fill:#FF9800,color:#fff
-    style P4 fill:#FF9800,color:#fff
-    style N1 fill:#4CAF50,color:#fff
-    style N2 fill:#4CAF50,color:#fff
-    style N3 fill:#4CAF50,color:#fff
-    style N4 fill:#4CAF50,color:#fff
-```
-
-### Persona B: 🏪 Retail Shop Owner
-
-```mermaid
-graph TB
-    subgraph "Demographics"
-        D["📍 District 1, Ho Chi Minh<br/>💰 Daily revenue: 10-50M₫<br/>👥 Team: 2-5 staff<br/>📱 Business smartphone user"]
-    end
-
-    subgraph "Pain Points"
-        P1["📊 Can't see staff performance<br/>No data on who sells most"]
-        P2["💳 Complex inventory<br/>Manual stock tracking"]
-        P3["📞 Customer repeat rate: 30%<br/>No loyalty program"]
-        P4["💰 Growing to 5 shops<br/>Need capital + systems"]
-    end
-
-    subgraph "Needs"
-        N1["Staff dashboard<br/>See daily/staff sales"]
-        N2["Inventory sync<br/>QR payment + stock update"]
-        N3["Loyalty program<br/>Points/rewards"]
-        N4["Growth financing<br/>5-50M₫ for expansion"]
-    end
-
-    D --> P1
-    P1 --> N1
-    D --> P2
-    P2 --> N2
-    D --> P3
-    P3 --> N3
-    D --> P4
-    P4 --> N4
-
-    style D fill:#FFC107,color:#000
-    style P1 fill:#FF9800,color:#fff
-    style P2 fill:#FF9800,color:#fff
-    style P3 fill:#FF9800,color:#fff
-    style P4 fill:#FF9800,color:#fff
-    style N1 fill:#4CAF50,color:#fff
-    style N2 fill:#4CAF50,color:#fff
-    style N3 fill:#4CAF50,color:#fff
-    style N4 fill:#4CAF50,color:#fff
-```
-
-## 1.4 Product Portfolio Strategy (Year 1)
-
-```mermaid
-graph TB
-    subgraph "Q2 2025: Merchant Dashboard"
-        Q1["📊 Daily sales analytics<br/>Revenue by hour/category<br/>Top items"]
-        Q1_IMPACT["→ Reduce churn: -5%<br/>→ ARPU: +2%"]
-    end
-
-    subgraph "Q3 2025: Customer Engagement"
-        Q2["📱 SMS/WhatsApp marketing<br/>Build customer database<br/>Promotional campaigns"]
-        Q2_IMPACT["→ Repeat rate: +25%<br/>→ GMV growth: +15%"]
-    end
-
-    subgraph "Q4 2025: Compliance & Invoicing"
-        Q3["📋 Auto e-invoicing<br/>Tax calculation<br/>Regulatory reporting"]
-        Q3_IMPACT["→ Compliance adoption: 40%<br/>→ Trust score: +10%"]
-    end
-
-    subgraph "Q1 2026: Merchant Financing"
-        Q4["💰 Quick loans<br/>Working capital<br/>Growth financing"]
-        Q4_IMPACT["→ New revenue: $5M<br/>→ LTV: +40%"]
-    end
-
-    Q1 --> Q1_IMPACT
-    Q1_IMPACT -->|"success"| Q2
-    Q2 --> Q2_IMPACT
-    Q2_IMPACT -->|"success"| Q3
-    Q3 --> Q3_IMPACT
-    Q3_IMPACT -->|"success"| Q4
-    Q4 --> Q4_IMPACT
-
-    style Q1 fill:#2196F3,color:#fff
-    style Q2 fill:#00BCD4,color:#000
-    style Q3 fill:#4CAF50,color:#fff
-    style Q4 fill:#FF1744,color:#fff
-    style Q1_IMPACT fill:#2196F3,color:#fff,stroke:#0D47A1,stroke-width:2px
-    style Q2_IMPACT fill:#00BCD4,color:#000,stroke:#00838F,stroke-width:2px
-    style Q3_IMPACT fill:#4CAF50,color:#fff,stroke:#1B5E20,stroke-width:2px
-    style Q4_IMPACT fill:#FF1744,color:#fff,stroke:#C00,stroke-width:2px
-```
-
-## 1.5 Success Metrics & Business KPIs
-
-### Tier 1: Retention & Engagement
-
-| Metric | Baseline 2024 | Q4 2025 Target | 2026 Target | Why It Matters |
-|--------|--------------|----------------|------------|----------------|
-| Merchant Churn | 25% annual | 20% | 15% | Core survival metric |
-| Engaged Merchants (using 2+ features) | 30% | 55% | 75% | Cross-sell success |
-| Avg Revenue per Merchant | $200/year | $350/year | $600/year | Monetization |
-| Merchant NPS | 42 | 50 | 55 | Loyalty & advocacy |
-
-### Tier 2: Product Adoption
-
-| Metric | Q1 Launch | Q2 | Q3 | Q4 |
-|--------|-----------|----|----|-----|
-| Dashboard Adoption | 20% | 35% | 50% | 65% |
-| SMS Campaign MAU | 5% | 12% | 25% | 40% |
-| E-Invoice Adoption | - | - | 15% | 35% |
-| Loan Applications | - | - | - | 5% |
-
-### Tier 3: Revenue & Profitability
-
-| Product | Year 1 Revenue Target | Gross Margin | Strategy |
-|---------|--------|---------|----------|
-| Dashboard (SaaS) | $800K | 75% | Freemium + premium |
-| SMS Marketing | $1.2M | 70% | Pay-per-campaign |
-| E-Invoice & Tax | $500K | 80% | Per-filing fee |
-| Merchant Loans | $5M | 15% | Interest + fees |
-
----
-
----
-
-# 2. PRODUCT DESIGN ARCHITECTURE
-
-## 2.1 Merchant Ecosystem Map
-
-```mermaid
-graph TB
-    subgraph "Merchant Core"
-        M["🏪 Merchant Profile<br/>- KYC info<br/>- Business details<br/>- Settlement account"]
-    end
-
-    subgraph "Payment Layer"
-        P1["💳 QR Payment<br/>Existing strength"]
-        P2["💾 Settlement<br/>Daily settlement"]
-        P3["📊 Payment Analytics<br/>Transaction data"]
-    end
-
-    subgraph "Business Operations"
-        B1["📊 Dashboard<br/>Sales analytics<br/>Performance tracking"]
-        B2["📦 Inventory<br/>Stock management<br/>Low stock alerts"]
-        B3["📝 Invoicing<br/>E-invoices<br/>Tax compliance"]
-    end
-
-    subgraph "Engagement & Growth"
-        G1["📱 Customer DB<br/>Phone/email collection<br/>Repeat customer tracking"]
-        G2["📢 Marketing<br/>SMS campaigns<br/>Promotions"]
-        G3["🎁 Loyalty<br/>Points program<br/>Rewards"]
-    end
-
-    subgraph "Financial Services"
-        F1["💰 Loans<br/>Working capital<br/>Growth financing"]
-        F2["💳 PayLater<br/>Merchant credit<br/>Inventory financing"]
-        F3["📈 Insurance<br/>Business insurance<br/>Liability"]
-    end
-
-    M --> P1
-    P1 --> P2
-    P2 --> P3
-    
-    P3 --> B1
-    P3 --> B2
-    P3 --> B3
-    
-    B1 --> G1
-    G1 --> G2
-    G1 --> G3
-    
-    P3 --> F1
-    B1 --> F1
-    P1 --> F2
-
-    style M fill:#FF1744,color:#fff,stroke:#C00,stroke-width:3px
-    style P1 fill:#2196F3,color:#fff
-    style P2 fill:#2196F3,color:#fff
-    style P3 fill:#2196F3,color:#fff
-    style B1 fill:#4CAF50,color:#fff
-    style B2 fill:#4CAF50,color:#fff
-    style B3 fill:#4CAF50,color:#fff
-    style G1 fill:#9C27B0,color:#fff
-    style G2 fill:#9C27B0,color:#fff
-    style G3 fill:#9C27B0,color:#fff
-    style F1 fill:#FF9800,color:#fff
-    style F2 fill:#FF9800,color:#fff
-    style F3 fill:#FF9800,color:#fff
-```
-
-## 2.2 Product 1: Merchant Dashboard (Q2 2025)
-
-### 2.2.1 Problem & Solution
-
-```mermaid
-graph LR
-    A["Problem:<br/>Merchants use Excel<br/>manually track sales<br/>Can't see trends"] -->|"Solution"| B["Dashboard:<br/>Auto-synced from QR<br/>Real-time analytics<br/>Trend insights"]
-    
-    B -->|"Outcome"| C["Result:<br/>Better decisions<br/>Inventory optimization<br/>Staff management"]
-
-    style A fill:#FF9800,color:#fff
-    style B fill:#4CAF50,color:#fff,stroke:#1B5E20,stroke-width:2px
-    style C fill:#2196F3,color:#fff
-```
-
-### 2.2.2 Feature Breakdown
-
-```mermaid
-graph TB
-    subgraph "Dashboard Home"
-        H1["📊 At-a-glance KPIs<br/>- Today revenue<br/>- vs Yesterday<br/>- vs This week<br/>- vs Last month"]
-        H2["🎯 Daily Target<br/>- Target: 5M₫<br/>- Actual: 4.2M₫<br/>- Status: 84%"]
-        H3["📈 Trend Chart<br/>- Last 7 days<br/>- Last 30 days<br/>- Interactive graph"]
-    end
-
-    subgraph "Detailed Analytics"
-        A1["🕐 By Time<br/>- Hourly breakdown<br/>- Peak hours<br/>- Slow periods"]
-        A2["🛍️ By Category<br/>- Item-level sales<br/>- Category trends<br/>- Popular items"]
-        A3["💳 By Payment<br/>- QR vs Cash<br/>- Payment method split<br/>- Conversion rate"]
-    end
-
-    subgraph "Business Insights"
-        I1["👥 Customer Insights<br/>- Repeat rate: 35%<br/>- Avg purchase: 50K<br/>- Top customers"]
-        I2["💡 Recommendations<br/>- Stock low item Y<br/>- Promote item Z<br/>- Schedule sale for Wed"]
-        I3["📊 Benchmarks<br/>- vs similar shops<br/>- vs your history<br/>- Industry average"]
-    end
-
-    H1 --> A1
-    H2 --> A2
-    H3 --> A3
-    
-    A1 --> I1
-    A2 --> I2
-    A3 --> I3
-
-    style H1 fill:#2196F3,color:#fff
-    style H2 fill:#2196F3,color:#fff
-    style H3 fill:#2196F3,color:#fff
-    style A1 fill:#00BCD4,color:#000
-    style A2 fill:#00BCD4,color:#000
-    style A3 fill:#00BCD4,color:#000
-    style I1 fill:#4CAF50,color:#fff
-    style I2 fill:#4CAF50,color:#fff
-    style I3 fill:#4CAF50,color:#fff
-```
-
-### 2.2.3 Data Flow: QR Payment → Dashboard
+### 2.2 Luồng hoạt động
 
 ```mermaid
 sequenceDiagram
-    participant QR as QR Payment<br/>Terminal
-    participant Backend as MoMo Backend<br/>Processing
-    participant ETL as ETL Pipeline<br/>Data Sync
-    participant DB as Analytics DB<br/>Data Warehouse
-    participant Dashboard as Merchant<br/>Dashboard
+    participant C as Customer
+    participant M as Merchant
+    participant P as MoMo Platform
+    participant A as Ads Engine
+    participant I as Invoice Engine
 
-    QR ->> Backend: Transaction event
-    activate Backend
-    Backend ->> Backend: Validate + Process
-    Backend ->> ETL: Send to pipeline
-    deactivate Backend
-
-    activate ETL
-    ETL ->> ETL: Transform + Aggregate
-    ETL ->> DB: Insert analytics data
-    deactivate ETL
-
-    activate DB
-    DB ->> Dashboard: Real-time data stream
-    deactivate DB
-
-    Dashboard ->> Dashboard: Render charts
-    Dashboard -->> Merchant: Display dashboard ✓
-
-    Note over QR,Dashboard: Latency: < 1 minute<br/>for < 1M merchants<br/>< 5 minutes for all
+    C->>M: Thanh toán bằng QR
+    M->>P: Gửi giao dịch
+    P->>P: Tổng hợp dữ liệu bán hàng
+    P->>A: Cập nhật dữ liệu để tối ưu quảng cáo
+    A-->>M: Báo cáo hiệu quả Facebook/Google Ads
+    P->>I: Tạo hóa đơn điện tử
+    I-->>M: Gửi hóa đơn + trạng thái nộp thuế
 ```
 
-## 2.3 Product 2: Customer Engagement Platform (Q3 2025)
-
-### 2.3.1 Architecture
+### 2.3 Kiến trúc hệ thống
 
 ```mermaid
 graph TB
-    subgraph "Data Collection"
-        D1["🔗 Link QR Payment<br/>Capture phone numbers<br/>Each transaction"]
-        D2["📱 Manual Entry<br/>Merchant adds customers<br/>Import from Excel"]
-        D3["🤖 AI Enrichment<br/>Segment customers<br/>Predict behavior"]
-    end
-
-    subgraph "Customer Database"
-        DB["📊 Customer DB<br/>- Phone<br/>- Purchase history<br/>- Frequency<br/>- Total spend<br/>- Tags/segments"]
-    end
-
-    subgraph "Engagement Channels"
-        SMS["📬 SMS Campaign<br/>Send promotions<br/>Track opens/clicks"]
-        WA["💬 WhatsApp<br/>Direct messaging<br/>Customer service"]
-        EMAIL["📧 Email<br/>Newsletters<br/>Offers"]
-    end
-
-    subgraph "Analytics"
-        ANALYTICS["📈 Campaign Analytics<br/>- Sent count<br/>- Open rate<br/>- Click rate<br/>- Conversion rate<br/>- ROI"]
-    end
-
-    D1 --> DB
-    D2 --> DB
-    D3 --> DB
-
-    DB --> SMS
-    DB --> WA
-    DB --> EMAIL
-
-    SMS --> ANALYTICS
-    WA --> ANALYTICS
-    EMAIL --> ANALYTICS
-
-    style D1 fill:#2196F3,color:#fff
-    style D2 fill:#2196F3,color:#fff
-    style D3 fill:#2196F3,color:#fff
-    style DB fill:#FF1744,color:#fff,stroke:#C00,stroke-width:3px
-    style SMS fill:#4CAF50,color:#fff
-    style WA fill:#4CAF50,color:#fff
-    style EMAIL fill:#4CAF50,color:#fff
-    style ANALYTICS fill:#9C27B0,color:#fff
+    UI[Merchant App/Web] --> API[API Gateway]
+    API --> DASH[Dashboard Service]
+    API --> ADS[Ads Campaign Service]
+    API --> INV[Invoice Service]
+    DASH --> DB[(Data Store)]
+    ADS --> DB
+    INV --> DB
+    DB --> ANALYTICS[Analytics Layer]
 ```
 
-### 2.3.2 Features & Use Cases
+---
+
+## 3. Wireframe UI cần thiết
+
+### 3.1 Dashboard tổng quan merchant
+
+```text
++-----------------------------------------------------------+
+| MoMo Merchant Center                 [Báo cáo] [Cài đặt] |
+|-----------------------------------------------------------|
+| Tổng doanh thu hôm nay: 4.2M ₫   | Mục tiêu tháng: 5M ₫ |
+| Tăng so với hôm qua: +150K ₫   | Tỷ lệ lặp lại: 35%     |
+|-----------------------------------------------------------|
+| [Doanh thu theo giờ] [Top sản phẩm] [Khách hàng quay lại] |
+|-----------------------------------------------------------|
+| 7 ngày gần nhất | 30 ngày gần nhất | Top nhóm hàng       |
++-----------------------------------------------------------+
+```
+
+### 3.2 Màn hình tạo chiến dịch quảng cáo
+
+```text
++-----------------------------------------------------------+
+| Tạo chiến dịch quảng cáo                                  |
+|-----------------------------------------------------------|
+| Nền tảng: [Facebook Ads] [Google Ads]                    |
+| Mục tiêu: [Tăng bán hàng] [Tăng lưu lượng]                |
+| Đối tượng: [Quận/Huyện] [Ngành hàng] [Tuổi] [Giới tính] |
+| Ngân sách: 10,000,000 ₫ / ngày                            |
+| Nội dung quảng cáo: [Text + Image + CTA]                  |
+|-----------------------------------------------------------|
+| [Lưu nháp] [Xem trước] [Đăng chiến dịch]                  |
++-----------------------------------------------------------+
+```
+
+### 3.3 Màn hình hiệu quả chiến dịch
+
+```text
++-----------------------------------------------------------+
+| Hiệu quả chiến dịch                                      |
+|-----------------------------------------------------------|
+| Tổng chi phí | 2.4M ₫ | Hiệu quả: 18% | CPA: 85K ₫        |
+|-----------------------------------------------------------|
+| [Biểu đồ conversion] [Biểu đồ ROI] [Top kênh hiệu quả]   |
+|-----------------------------------------------------------|
+| Facebook Ads: 12.4% CTR | Google Ads: 8.2% CTR          |
++-----------------------------------------------------------+
+```
+
+### 3.4 Wizard hóa đơn điện tử
+
+```text
++-----------------------------------------------------------+
+| Tạo hóa đơn điện tử                                      |
+|-----------------------------------------------------------|
+| Bước 1: Chọn giao dịch                                   |
+| Bước 2: Kiểm tra thông tin khách hàng                    |
+| Bước 3: Xác nhận thuế và nộp hồ sơ                       |
+|-----------------------------------------------------------|
+| [Quay lại] [Tiếp tục] [Hoàn thành]                        |
++-----------------------------------------------------------+
+```
+
+### 3.5 Sơ đồ thành phần UI
+
+```mermaid
+graph TB
+    A[Dashboard Card] --> B[Shared Components]
+    C[Campaign Builder] --> B
+    D[Analytics Panel] --> B
+    E[Invoice Wizard] --> B
+    B --> F[Button / Modal / Table / Chart]
+```
+
+---
+
+## 4. Data schema & UI mapping
+
+### 4.1 Mô hình dữ liệu chính
+
+```mermaid
+graph TB
+    subgraph "Dữ liệu giao dịch"
+        T[transactions]
+    end
+
+    subgraph "Phân tích bán hàng"
+        S[sales_summary]
+        C[customer_profile]
+    end
+
+    subgraph "Marketing"
+        A[ads_campaigns]
+        M[ads_metrics]
+    end
+
+    subgraph "Hóa đơn"
+        I[invoices]
+        X[tax_summary]
+    end
+
+    T --> S
+    T --> C
+    C --> A
+    A --> M
+    T --> I
+    I --> X
+```
+
+### 4.2 Mapping UI → dữ liệu
+
+| UI màn hình | Dữ liệu nguồn | Trường chính |
+|---|---|---|
+| Dashboard doanh thu | sales_summary | revenue_today, revenue_week, target_progress |
+| Campaign builder | ads_campaigns | campaign_name, platform, budget, objective |
+| Analytics quảng cáo | ads_metrics | ctr, cpa, conversions, roi |
+| Wizard hóa đơn | invoices | invoice_id, amount, tax_amount, status |
+
+### 4.3 Mô hình dữ liệu rút gọn
+
+```sql
+CREATE TABLE ads_campaigns (
+    campaign_id VARCHAR(50) PRIMARY KEY,
+    merchant_id VARCHAR(50),
+    platform VARCHAR(20),
+    objective VARCHAR(50),
+    budget BIGINT,
+    status VARCHAR(20)
+);
+
+CREATE TABLE ads_metrics (
+    campaign_id VARCHAR(50) PRIMARY KEY,
+    impressions INT,
+    clicks INT,
+    conversions INT,
+    cpa BIGINT,
+    roi DECIMAL(5,2)
+);
+
+CREATE TABLE invoices (
+    invoice_id VARCHAR(50) PRIMARY KEY,
+    merchant_id VARCHAR(50),
+    txn_id VARCHAR(50),
+    amount BIGINT,
+    tax_amount BIGINT,
+    status VARCHAR(20)
+);
+```
+
+### 4.4 Luồng dữ liệu chủ đạo
 
 ```mermaid
 graph LR
-    A["🎯 Segment Customers<br/>By: Frequency, Spend,<br/>Last purchase, Tags"] -->|"1"| B1["📢 Send SMS<br/>'Come back sale'<br/>Discount code"]
-    
-    A -->|"2"| B2["💬 WhatsApp<br/>Personalized offer<br/>based on purchase"]
-    
-    A -->|"3"| B3["🎁 Loyalty Rewards<br/>100 points<br/>after 5 visits"]
-
-    B1 -->|"Result"| C1["📊 15% open<br/>8% click<br/>3% conversion"]
-    B2 -->|"Result"| C2["📊 30% read<br/>12% reply<br/>5% purchase"]
-    B3 -->|"Result"| C3["📊 Repeat +20%<br/>Lifetime value<br/>+25%"]
-
-    style A fill:#FFC107,color:#000,stroke:#FFA000,stroke-width:2px
-    style B1 fill:#2196F3,color:#fff
-    style B2 fill:#2196F3,color:#fff
-    style B3 fill:#2196F3,color:#fff
-    style C1 fill:#4CAF50,color:#fff
-    style C2 fill:#4CAF50,color:#fff
-    style C3 fill:#4CAF50,color:#fff
-```
-
-## 2.4 Product 3: E-Invoice & Compliance (Q4 2025)
-
-### 2.4.1 Problem & Solution
-
-```mermaid
-graph TB
-    subgraph "Current State"
-        P1["❌ Manual invoices<br/>Paper or Word doc"]
-        P2["❌ No tax tracking<br/>Guess when filing"]
-        P3["❌ Audit risk<br/>No records"]
-        P4["❌ Compliance confusion<br/>Regulatory uncertainty"]
-    end
-
-    subgraph "MoMo Solution"
-        S1["✅ Auto e-invoices<br/>Generated from QR txns<br/>Compliant format"]
-        S2["✅ Tax calculation<br/>Auto-calc VAT/taxes<br/>Based on category"]
-        S3["✅ Audit trail<br/>All txns recorded<br/>Time-stamped"]
-        S4["✅ Compliance help<br/>Filing assistant<br/>Regulatory guide"]
-    end
-
-    P1 --> S1
-    P2 --> S2
-    P3 --> S3
-    P4 --> S4
-
-    style P1 fill:#FF9800,color:#fff
-    style P2 fill:#FF9800,color:#fff
-    style P3 fill:#FF9800,color:#fff
-    style P4 fill:#FF9800,color:#fff
-    style S1 fill:#4CAF50,color:#fff
-    style S2 fill:#4CAF50,color:#fff
-    style S3 fill:#4CAF50,color:#fff
-    style S4 fill:#4CAF50,color:#fff
-```
-
-### 2.4.2 Workflow: Auto E-Invoice Generation
-
-```mermaid
-sequenceDiagram
-    participant Merchant as Merchant<br/>Soundbox
-    participant QR as QR<br/>Transaction
-    participant System as Invoice<br/>System
-    participant Tax as Tax<br/>Engine
-    participant Archive as Invoice<br/>Archive
-    participant Gov as Govt DB<br/>eInvoice Portal
-
-    Merchant ->> QR: Customer pays 100K
-    QR ->> System: Transaction logged
-    System ->> Tax: Calculate tax (10% = 10K)
-    Tax -->> System: Tax amount
-    System ->> System: Generate invoice<br/>Invoice #MOM001<br/>Datetime<br/>Items<br/>Total
-    System ->> Archive: Store in archive
-    Archive ->> Gov: Auto-submit to<br/>eInvoice portal
-    Gov -->> System: Confirmed receipt ✓
-    System ->> Merchant: Invoice ready<br/>Send to customer
-
-    Note over System,Archive: Instant - < 5 sec<br/>No merchant action needed
+    A[QR payment] --> B[Transaction Store]
+    B --> C[Sales Summary]
+    B --> D[Customer Profile]
+    C --> E[Dashboard]
+    D --> F[Facebook Ads / Google Ads]
+    F --> G[Ads Metrics]
+    B --> H[Invoice Engine]
+    H --> I[Tax Summary]
 ```
 
 ---
 
----
-
-# 3. PRODUCT SAMPLES & UX/UI ARTIFACTS
-
-## 3.1 Merchant Dashboard - UI Wireframe
-
-### Home Screen
-
-```
-┌───────────────────────────────────────┐
-│          🏪 Merchant Dashboard         │
-│                                       │
-├─ TODAY ─────────────────────────────┤
-│                                       │
-│  💰 Revenue Today        📊 Target    │
-│  ┌─────────────────────┐ ┌─────────┐ │
-│  │     4.2M ₫          │ │ 84% 🟢  │ │
-│  │   vs Yest: +150K ↑  │ │ 5M ₫    │ │
-│  └─────────────────────┘ └─────────┘ │
-│                                       │
-│  📈 Last 7 Days Revenue               │
-│  ┌─────────────────────────────────┐ │
-│  │     ╱╲   ╱╲                      │ │
-│  │    ╱  ╲ ╱  ╲  ╱╲   ╱╲           │ │
-│  │   ╱    ╱     ╲╱  ╲╱   ╲        │ │
-│  │  Mon Tue Wed Thu Fri Sat Sun    │ │
-│  │  3.2  3.8  4.1  3.9  4.5 4.2 M₫│ │
-│  └─────────────────────────────────┘ │
-│                                       │
-├─ BREAKDOWN ──────────────────────────┤
-│                                       │
-│  🕐 By Hour       🛍️ By Category     │
-│  ├─ 9-10am: 800K   ├─ Bún phở: 1.8M  │
-│  ├─ 10-11am: 900K  ├─ Egg roll: 900K │
-│  ├─ 11-12: 1.2M    ├─ Soup: 600K     │
-│  ├─ 12-1pm: 800K   └─ Drink: 300K    │
-│  └─ More...                          │
-│                                       │
-│  [View More] [Export] [Share]        │
-└───────────────────────────────────────┘
-```
-
-### Detailed Analytics Screen
-
-```
-┌───────────────────────────────────────┐
-│       📊 Detailed Analytics           │
-├─────────────────────────────────────┤
-│                                       │
-│  Period: [This Month ▼]              │
-│                                       │
-│  ┌─ SUMMARY ───────────────────────┐ │
-│  │ Total Revenue:  90M₫            │ │
-│  │ Transactions:   2,450           │ │
-│  │ Avg Order:      36.7K₫          │ │
-│  │ Repeat Rate:    32%             │ │
-│  └─────────────────────────────────┘ │
-│                                       │
-│  ┌─ TOP ITEMS ──────────────────────┐ │
-│  │ 1. Bún phở special   35% | 15.8M│ │
-│  │ 2. Egg roll          28% | 12.6M│ │
-│  │ 3. Spring roll       22% | 9.9M │ │
-│  │ 4. Soup              15% | 6.7M │ │
-│  └─────────────────────────────────┘ │
-│                                       │
-│  ┌─ TOP CUSTOMERS ──────────────────┐│
-│  │ 1. Nguyễn Văn A    45 visits     │ │
-│  │    └─ Total spent: 2.3M₫         │ │
-│  │ 2. Trần Thị B      32 visits     │ │
-│  │    └─ Total spent: 1.8M₫         │ │
-│  └─────────────────────────────────┘ │
-│                                       │
-│  [Print Report] [Send Email] [Export]│
-└───────────────────────────────────────┘
-```
-
-## 3.2 Customer Engagement Platform - UI Wireframe
-
-### SMS Campaign Builder
-
-```
-┌───────────────────────────────────────┐
-│    📬 Create SMS Campaign              │
-├─────────────────────────────────────┤
-│                                       │
-│  Campaign Name:                      │
-│  [Enter campaign name________]      │
-│                                       │
-│  Target Segment: [Choose ▼]          │
-│  ├─ All customers (847)              │
-│  ├─ Frequent buyers (250) *          │
-│  ├─ First-time (120)                 │
-│  ├─ Inactive 30 days (45)            │
-│  └─ Custom filter...                 │
-│                                       │
-│  Message Template:                   │
-│  ┌───────────────────────────────────┐│
-│  │ Hi {name}! 🎉                      ││
-│  │                                    ││
-│  │ Come back to our shop today!      ││
-│  │ Show code: COMEBACK20 for          ││
-│  │ 20% off your next order ❤️        ││
-│  │                                    ││
-│  │ Valid today only!                  ││
-│  │ Order now: [Link]                  ││
-│  └───────────────────────────────────┘│
-│  [120/160 characters]                │
-│                                       │
-│  Schedule:                           │
-│  ○ Send now                          │
-│  ◉ Schedule for: [2pm Today ▼]      │
-│                                       │
-│  Estimated Reach: 250 SMS            │
-│  Cost: 125K₫ (at 500₫/SMS)          │
-│                                       │
-│  [Preview] [Save Draft] [Send SMS]   │
-└───────────────────────────────────────┘
-```
-
-### Campaign Analytics Dashboard
-
-```
-┌───────────────────────────────────────┐
-│    📊 Campaign Performance             │
-├─────────────────────────────────────┤
-│                                       │
-│  Campaign: "Comeback20 Sale"         │
-│  Sent: July 10 at 2:00 PM            │
-│  Status: ✓ Completed                 │
-│                                       │
-│  ┌─ CORE METRICS ──────────────────┐ │
-│  │ Sent:        250 SMS            │ │
-│  │ Delivered:   248 (99.2%) ✓      │ │
-│  │ Failed:      2 (0.8%)           │ │
-│  │ Read Rate:   78 (31.4%)         │ │
-│  │ Click Rate:  32 (12.9%)         │ │
-│  │ Conversion:  8 orders (3.2%)    │ │
-│  └─────────────────────────────────┘ │
-│                                       │
-│  ┌─ REVENUE IMPACT ────────────────┐ │
-│  │ Total Orders: 8                 │ │
-│  │ Order Value: 45K₫ avg           │ │
-│  │ Revenue: 360K₫                  │ │
-│  │ Cost: 125K₫                     │ │
-│  │ ROI: 188% ✓ Great! 🎉          │ │
-│  └─────────────────────────────────┘ │
-│                                       │
-│  ┌─ TIMELINE ──────────────────────┐ │
-│  │ Sent:   14:00 ────────          │ │
-│  │ Reads:  14:15 ──────────        │ │
-│  │ Clicks: 14:20 ──────            │ │
-│  │ Orders: 14:30 ─────             │ │
-│  └─────────────────────────────────┘ │
-│                                       │
-│  [Create New Campaign] [Duplicate]   │
-└───────────────────────────────────────┘
-```
-
-## 3.3 E-Invoice & Tax Compliance - UI Wireframe
-
-### Invoice Archive
-
-```
-┌───────────────────────────────────────┐
-│     📋 Invoice Archive                 │
-├─────────────────────────────────────┤
-│                                       │
-│  Filter: [Month: July ▼] [Status ▼] │
-│                                       │
-│  ┌──────────────────────────────────┐│
-│  │ Invoice #MOM-2025-07-0001        ││
-│  │ Date: July 10, 14:23             ││
-│  │ Amount: 100K₫ (VAT: 10K)        ││
-│  │ Status: ✓ Submitted to Govt      ││
-│  │ [View] [Download PDF] [Resend]   ││
-│  └──────────────────────────────────┘│
-│                                       │
-│  ┌──────────────────────────────────┐│
-│  │ Invoice #MOM-2025-07-0002        ││
-│  │ Date: July 10, 14:45             ││
-│  │ Amount: 250K₫ (VAT: 25K)        ││
-│  │ Status: ✓ Submitted to Govt      ││
-│  │ [View] [Download PDF] [Resend]   ││
-│  └──────────────────────────────────┘│
-│                                       │
-│  ┌──────────────────────────────────┐│
-│  │ Invoice #MOM-2025-07-0003        ││
-│  │ Date: July 11, 09:12             ││
-│  │ Amount: 180K₫ (VAT: 18K)        ││
-│  │ Status: ✓ Submitted to Govt      ││
-│  │ [View] [Download PDF] [Resend]   ││
-│  └──────────────────────────────────┘│
-│                                       │
-│  Monthly Summary:                     │
-│  Total Invoices: 2,450              │
-│  Total Revenue: 90M₫                │
-│  Total VAT: 9M₫                     │
-│                                       │
-│  [File Tax Return] [Print Report]    │
-└───────────────────────────────────────┘
-```
-
-### Tax Filing Assistant
-
-```
-┌───────────────────────────────────────┐
-│    💼 Tax Filing Assistant            │
-├─────────────────────────────────────┤
-│                                       │
-│  📅 July 2025 Tax Summary             │
-│                                       │
-│  ✓ Step 1: Calculate Tax             │
-│  ├─ Total Revenue: 90M₫              │
-│  ├─ Invoices Generated: 2,450        │
-│  ├─ VAT (10%): 9M₫                   │
-│  ├─ Calculation: Automated ✓         │
-│  └─ Status: Ready                    │
-│                                       │
-│  ✓ Step 2: Prepare Filing            │
-│  ├─ Form Template: Loaded            │
-│  ├─ Auto-fill: 90M₫ (Revenue)       │
-│  ├─ Auto-fill: 9M₫ (Tax)             │
-│  ├─ Status: Ready                    │
-│  └─                                  │
-│                                       │
-│  ○ Step 3: Submit to Tax Authority   │
-│  ├─ Destination: HCM Tax Office      │
-│  ├─ Deadline: July 25, 2025          │
-│  ├─ Days left: 5 days ⏰             │
-│  └─ [Preview] [Submit Online]        │
-│                                       │
-│  💡 Tip: File before July 25 to      │
-│  avoid penalties!                     │
-│                                       │
-│  [Chat Support] [Learn More]         │
-└───────────────────────────────────────┘
-```
-
----
-
----
-
-# 4. DATA SCHEMA & UI MAPPING
-
-## 4.1 Merchant Dashboard - Data Architecture
-
-```mermaid
-graph TB
-    subgraph "Raw Data Layer"
-        QR_TXN["qr_transactions<br/>- txn_id, merchant_id<br/>- amount, timestamp<br/>- category, customer_phone"]
-        CATEG["categories<br/>- id, name, tax_rate"]
-    end
-
-    subgraph "Analytics Layer"
-        HOURLY["hourly_sales<br/>- revenue, txn_count<br/>- category_breakdown"]
-        DAILY["daily_sales<br/>- revenue, repeat_rate<br/>- top_items"]
-    end
-
-    subgraph "Cache & Display"
-        CACHE["dashboard_cache<br/>- today_revenue<br/>- weekly_avg<br/>- monthly_target"]
-    end
-
-    QR_TXN --> HOURLY
-    HOURLY --> DAILY
-    DAILY --> CACHE
-
-    style QR_TXN fill:#2196F3,color:#fff
-    style CATEG fill:#2196F3,color:#fff
-    style HOURLY fill:#FFC107,color:#000
-    style DAILY fill:#FFC107,color:#000
-    style CACHE fill:#4CAF50,color:#fff,stroke:#1B5E20,stroke-width:2px
-```
-
-**Key Tables**: `qr_transactions` → `hourly_sales` → `daily_sales` → `dashboard_cache`
-
----
-
-## 4.2 Customer Engagement Platform - Data Schema
-
-```mermaid
-graph TB
-    subgraph "Customer Data"
-        CUST["customers<br/>- customer_id, phone<br/>- merchant_id<br/>- purchase_count"]
-        SEGMENT["customer_segments<br/>- customer_id<br/>- segment_type<br/>(frequent, at_risk, vip)"]
-    end
-
-    subgraph "Campaign Execution"
-        CAMPAIGN["sms_campaigns<br/>- campaign_id<br/>- message, status"]
-        DELIVERY["campaign_delivery<br/>- delivery_id<br/>- status, read_at<br/>- clicked_at"]
-    end
-
-    subgraph "Analytics"
-        METRICS["campaign_metrics<br/>- open_rate, click_rate<br/>- conversion_count<br/>- roi_percent"]
-    end
-
-    CUST --> SEGMENT
-    SEGMENT --> CAMPAIGN
-    CAMPAIGN --> DELIVERY
-    DELIVERY --> METRICS
-
-    style CUST fill:#2196F3,color:#fff
-    style SEGMENT fill:#2196F3,color:#fff
-    style CAMPAIGN fill:#4CAF50,color:#fff
-    style DELIVERY fill:#4CAF50,color:#fff
-    style METRICS fill:#9C27B0,color:#fff,stroke:#6A1B9A,stroke-width:2px
-```
-
-**Key Tables**: `customers` → `customer_segments` → `sms_campaigns` → `campaign_delivery` → `campaign_metrics`
-
----
-
-## 4.3 E-Invoice & Compliance - Data Schema
-
-```mermaid
-graph TB
-    subgraph "Transaction"
-        TXN["qr_transactions<br/>(from dashboard)"]
-    end
-
-    subgraph "Invoice"
-        INV["invoices<br/>- invoice_id<br/>- amount, tax_amount<br/>- status"]
-    end
-
-    subgraph "Tax & Filing"
-        TAX["invoice_tax_detail<br/>- tax_rate, tax_amount"]
-        FILING["tax_monthly_summary<br/>- total_revenue<br/>- total_tax<br/>- filing_status"]
-    end
-
-    subgraph "Compliance"
-        GOV["govt_submission_log<br/>- submitted_at<br/>- reference_no"]
-    end
-
-    TXN --> INV
-    INV --> TAX
-    TAX --> FILING
-    FILING --> GOV
-
-    style TXN fill:#2196F3,color:#fff
-    style INV fill:#FF1744,color:#fff,stroke:#C00,stroke-width:2px
-    style TAX fill:#FFC107,color:#000
-    style FILING fill:#FFC107,color:#000
-    style GOV fill:#4CAF50,color:#fff
-```
-
-**Key Tables**: `qr_transactions` → `invoices` → `invoice_tax_details` → `tax_monthly_summary` → `govt_submission_log`
-
----
-
-## 4.4 Complete User Journey Data Flow
-
-```mermaid
-graph TB
-    subgraph "1. QR Payment"
-        A["👤 Customer pays 100K"]
-    end
-
-    subgraph "2. Data Pipeline"
-        B["🔌 Event triggered"]
-        C["📥 Streaming pipeline"]
-        D["💾 Raw DB"]
-    end
-
-    subgraph "3. Aggregation"
-        E["⏰ Hourly aggregation"]
-        F["📅 Daily cache"]
-    end
-
-    subgraph "4. Display & Actions"
-        G["🏪 Dashboard view"]
-        H["📋 Invoice generation"]
-        I["📱 Customer engagement"]
-    end
-
-    A --> B
-    B --> C
-    C --> D
-    D --> E
-    E --> F
-    F --> G
-    D --> H
-    D --> I
-
-    style A fill:#FFC107,color:#000
-    style B fill:#FF9800,color:#fff
-    style C fill:#2196F3,color:#fff
-    style D fill:#2196F3,color:#fff
-    style E fill:#00BCD4,color:#000
-    style F fill:#4CAF50,color:#fff
-    style G fill:#4CAF50,color:#fff,stroke:#1B5E20,stroke-width:2px
-    style H fill:#FF1744,color:#fff
-    style I fill:#9C27B0,color:#fff
-```
-
-**Flow**: QR Payment → Event Stream → Raw DB → Hourly/Daily Aggregation → Dashboard/Invoice/Engagement
-
----
-
-## 4.5 API Contracts (Summary)
-
-| Endpoint | Method | Purpose | Response |
-|----------|--------|---------|----------|
-| `/dashboard/home` | GET | Today's revenue & analytics | `{today_revenue, weekly_avg, target_progress}` |
-| `/campaigns/sms/send` | POST | Send SMS to segment | `{campaign_id, target_count, cost_vnd}` |
-| `/invoices/generate` | POST | Auto-generate invoice | `{invoice_id, invoice_number, status}` |
-
----
-
-## 4.6 Figma Component Library Map
-
-```mermaid
-graph TB
-    subgraph "Dashboard"
-        C1["KPI Card"]
-        C2["Trend Chart"]
-        C3["Category Grid"]
-        C4["Customer List"]
-    end
-
-    subgraph "Campaigns"
-        C5["Segment Selector"]
-        C6["Message Editor"]
-        C7["Schedule Picker"]
-        C8["Cost Calculator"]
-    end
-
-    subgraph "Invoicing"
-        C9["Invoice Card"]
-        C10["Tax Summary"]
-        C11["Filing Wizard"]
-    end
-
-    subgraph "Shared"
-        SHARED["Modal, Button,<br/>Input, Dropdown,<br/>Table, Toast"]
-    end
-
-    C1 --> SHARED
-    C2 --> SHARED
-    C3 --> SHARED
-    C4 --> SHARED
-    C5 --> SHARED
-    C6 --> SHARED
-    C7 --> SHARED
-    C8 --> SHARED
-    C9 --> SHARED
-    C10 --> SHARED
-    C11 --> SHARED
-
-    style C1 fill:#2196F3,color:#fff
-    style C2 fill:#2196F3,color:#fff
-    style C3 fill:#2196F3,color:#fff
-    style C4 fill:#2196F3,color:#fff
-    style C5 fill:#4CAF50,color:#fff
-    style C6 fill:#4CAF50,color:#fff
-    style C7 fill:#4CAF50,color:#fff
-    style C8 fill:#4CAF50,color:#fff
-    style C9 fill:#FF1744,color:#fff
-    style C10 fill:#FF1744,color:#fff
-    style C11 fill:#FF1744,color:#fff
-    style SHARED fill:#9C27B0,color:#fff,stroke:#6A1B9A,stroke-width:2px
-```
-
----
-
-# APPENDIX: Implementation Roadmap
+## 5. Roadmap triển khai
 
 ```mermaid
 timeline
-    title SME Solutions Product Roadmap 2025-2026
-    
+    title Roadmap SME Merchants 2025-2026
     section Q2 2025
-        🚀 Dashboard MVP Launch
-        : Daily sales by hour/category
-        : Top items & customers
-        : Target tracking
-        : 1K merchants beta
-    
+        Dashboard MVP
+        : Doanh thu theo thời gian
+        : Mục tiêu và cảnh báo
     section Q3 2025
-        📱 Customer Engagement
-        : SMS campaign builder
-        : Customer segmentation
-        : Campaign analytics
-        : Scale to 50K merchants
-    
+        Growth Marketing
+        : Facebook Ads
+        : Google Ads
+        : ROI tracking
     section Q4 2025
-        📋 Compliance Suite
-        : Auto e-invoicing
-        : Tax calculation
-        : Govt submission
-        : 200K merchants
-    
+        Compliance
+        : Hóa đơn điện tử
+        : Tự động tính thuế
     section Q1 2026
-        💰 Merchant Financing
-        : Quick loans
-        : Credit decisioning
-        : AI underwriting
-        : Target: $10M loan book
+        Scale-up
+        : AI recommendation
+        : Tự động tối ưu ngân sách quảng cáo
 ```
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: July 14, 2026  
-**Owner**: Product Manager - SME Merchants  
-**Status**: Ready for Engineering Kickoff
-
+**Phiên bản**: 2.0  
+**Ngày cập nhật**: 15/07/2026  
+**Trạng thái**: Sẵn sàng cho kickoff engineering

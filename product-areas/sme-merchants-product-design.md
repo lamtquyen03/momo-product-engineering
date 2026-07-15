@@ -358,6 +358,75 @@ graph LR
 - Q: What makes a good product trainee here?  
   A: Curiosity, proactivity, empathy for merchants, strong communication, and ability to turn data into action.
 
+### 5.6 Short concise solution answer
+
+**Product thesis:** turn every QR payment into trusted evidence, simple insight, and useful next actions for merchants.
+
+```mermaid
+flowchart TB
+    A["Merchant pain<br/>unclear cash flow"] --> B["Trust layer<br/>proof + reconciliation"]
+    B --> C["Insight layer<br/>dashboard + AI"]
+    C --> D["Action layer<br/>invoice / ads / advice"]
+    D --> E["Outcome<br/>peace of mind + growth"]
+
+    style A fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+    style B fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    style C fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px
+    style D fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    style E fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+```
+
+```mermaid
+flowchart LR
+    A["Merchant opens app"] --> B["Sees today revenue"]
+    B --> C["Checks cash flow"]
+    C --> D["Auto invoice"]
+    C --> E["AI suggestion"]
+    D --> F["Confidence"]
+    E --> F
+
+    style A fill:#FFF8E1,stroke:#F9A825,stroke-width:2px
+    style B fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+    style C fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    style D fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    style E fill:#E0F7FA,stroke:#00838F,stroke-width:2px
+    style F fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+```
+
+```mermaid
+sequenceDiagram
+    participant M as Merchant
+    participant P as MoMo
+    participant AI as Moni
+
+    M->>P: Receive QR payment
+    P->>P: Record transaction
+    P->>M: Show daily recap
+    P->>AI: Detect pattern
+    AI-->>M: Suggest next action
+```
+
+```mermaid
+flowchart TB
+    A["Adoption"] --> B["Engagement"]
+    B --> C["Retention"]
+    C --> D["Monetization"]
+    D --> E["Trust"]
+    E --> A
+
+    style A fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
+    style B fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px
+    style C fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px
+    style D fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    style E fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+```
+
+**Why this fits the JD:**
+- Trust + Proof: help merchants feel secure about every transaction.
+- Simplicity: make the experience clear for older, less tech-savvy users.
+- AI + data: turn behavior signals into daily recommendations.
+- Execution: connect product, data, design, engineering, and ops around one merchant goal.
+
 ---
 
 ## 6. Roadmap triển khai

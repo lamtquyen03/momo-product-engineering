@@ -364,21 +364,21 @@ graph LR
 
 ```mermaid
 timeline
-    title Roadmap SME Merchants 2025-2026
-    section Q2 2025
+    title Roadmap SME Merchants 2026-2027
+    section Q2 2026
         Dashboard MVP
         : Doanh thu theo thời gian
         : Mục tiêu và cảnh báo
-    section Q3 2025
+    section Q3 2026
         Growth Marketing
         : Facebook Ads
         : Google Ads
         : ROI tracking
-    section Q4 2025
+    section Q4 2026
         Compliance
         : Hóa đơn điện tử
         : Tự động tính thuế
-    section Q1 2026
+    section Q1 2027
         Scale-up
         : AI recommendation
         : Tự động tối ưu ngân sách quảng cáo

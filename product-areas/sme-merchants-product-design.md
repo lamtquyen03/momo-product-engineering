@@ -165,7 +165,7 @@ graph TB
 
 ---
 
-## 4. Data schema & UI mapping
+## 4. Mô hình dữ liệu và mapping UI
 
 ### 4.1 Mô hình dữ liệu chính
 
@@ -256,15 +256,15 @@ graph LR
 
 ## 5. JD Mapping & Interview Prep
 
-### 5.1 Product lens cho JD này
+### 5.1 Góc nhìn sản phẩm cho JD này
 
 ```mermaid
 flowchart TB
-    A["Pain point<br/>merchant lo lắng về tiền"] --> B["Trust + Proof"]
-    B --> C["Reconcile minh bạch"]
+    A["Vấn đề cốt lõi<br/>merchant lo lắng về tiền"] --> B["Tin tưởng + Chứng minh"]
+    B --> C["Đối soát minh bạch"]
     B --> D["Hiểu doanh thu bằng ngôn ngữ đơn giản"]
     B --> E["AI Moni hỗ trợ quyết định"]
-    C --> F["Peace of mind"]
+    C --> F["An tâm"]
     D --> F
     E --> F
 
@@ -294,14 +294,14 @@ flowchart LR
     style F fill:#FFEBEE,stroke:#C62828,stroke-width:2px
 ```
 
-### 5.3 Metrics loop cho sản phẩm
+### 5.3 Chu trình chỉ số cho sản phẩm
 
 ```mermaid
 flowchart TB
-    A["Engagement"] --> B["Retention"]
-    B --> C["Conversion"]
+    A["Tương tác"] --> B["Giữ chân"]
+    B --> C["Chuyển đổi"]
     C --> D["Monetization"]
-    D --> E["Merchant trust"]
+    D --> E["Niềm tin merchant"]
     E --> A
 
     style A fill:#E3F2FD,stroke:#1565C0,stroke-width:2px
@@ -311,16 +311,16 @@ flowchart TB
     style E fill:#FFEBEE,stroke:#C62828,stroke-width:2px
 ```
 
-### 5.4 Cross-functional execution
+### 5.4 Thực thi đa bộ phận
 
 ```mermaid
 graph LR
-    P["Product"] --> E["Engineering"]
-    P --> D["Data"]
+    P["Sản phẩm"] --> E["Kỹ thuật"]
+    P --> D["Dữ liệu"]
     P --> A["AI"]
-    P --> X["Design"]
-    P --> O["Operations"]
-    E --> R["Release"]
+    P --> X["Thiết kế"]
+    P --> O["Vận hành"]
+    E --> R["Ra mắt"]
     D --> R
     A --> R
     X --> R
@@ -335,28 +335,28 @@ graph LR
     style R fill:#FCE4EC,stroke:#C2185B,stroke-width:2px
 ```
 
-### 5.5 Short concise Q&A for interview
+### 5.5 Hỏi đáp ngắn gọn cho phỏng vấn
 
-- Q: What is this JD about?  
-  A: Build merchant-first products that help SMEs trust their cash flow, understand their business, and grow through better insights and AI assistance.
+- Q: JD này nói về gì?  
+  A: Xây dựng sản phẩm đặt merchant làm trung tâm, giúp SME tin tưởng vào dòng tiền, hiểu rõ hoạt động kinh doanh và phát triển nhờ dữ liệu và AI.
 
-- Q: Why is merchant engagement important?  
-  A: Because merchants need confidence, not just features. If they trust the product, they will use it more often and stay longer.
+- Q: Vì sao engagement của merchant lại quan trọng?  
+  A: Vì merchant cần sự an tâm, không chỉ là các tính năng. Khi họ tin tưởng sản phẩm, họ sẽ dùng thường xuyên và gắn bó lâu hơn.
 
-- Q: How would you approach user research?  
-  A: Start with field interviews, observe older and less tech-savvy merchants, and turn their language into clear user stories.
+- Q: Bạn sẽ tiếp cận research người dùng như thế nào?  
+  A: Bắt đầu từ phỏng vấn thực địa, quan sát merchant lớn tuổi và ít quen công nghệ, rồi chuyển ngôn ngữ của họ thành user stories rõ ràng.
 
-- Q: What metrics matter most?  
-  A: Engagement, retention, conversion, revenue impact, and stability after release.
+- Q: Những metric nào quan trọng nhất?  
+  A: Tương tác, giữ chân, chuyển đổi, tác động doanh thu và độ ổn định sau khi ra mắt.
 
-- Q: How would you prioritize features?  
-  A: Use Jobs-to-be-Done: solve trust + proof first, then simplify the experience and remove friction.
+- Q: Bạn sẽ ưu tiên feature như thế nào?  
+  A: Dùng tư duy Jobs-to-be-Done: giải quyết trust + proof trước, rồi đơn giản trải nghiệm và giảm friction.
 
-- Q: What role does AI play?  
-  A: AI should make work easier, not more complicated. Moni should help merchants act faster with simple and useful suggestions.
+- Q: Vai trò của AI là gì?  
+  A: AI nên làm việc dễ hơn, không phức tạp hơn. Moni cần giúp merchant ra quyết định nhanh hơn bằng gợi ý đơn giản và hữu ích.
 
-- Q: What makes a good product trainee here?  
-  A: Curiosity, proactivity, empathy for merchants, strong communication, and ability to turn data into action.
+- Q: Điều gì làm nên một Product Trainee tốt ở đây?  
+  A: Curiosity, chủ động, đồng cảm với merchant, giao tiếp tốt và biết biến dữ liệu thành hành động.
 
 ---
 

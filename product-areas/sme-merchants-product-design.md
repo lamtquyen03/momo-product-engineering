@@ -17,13 +17,13 @@ Các merchant SME thường gặp ba rào cản chính: thiếu dữ liệu bán
 - Tối ưu chi phí marketing bằng Facebook Ads và Google Ads thay vì chỉ phụ thuộc vào SMS
 
 ### 1.4 KPI trọng tâm
-| KPI | Mục tiêu |
+| KPI | Target |
 |---|---:|
-| Doanh thu/ngày | +15% trong 90 ngày |
-| Tỷ lệ khách hàng quay lại | +10% |
-| Chi phí thu hút khách hàng | Giảm 20% |
-| Tỷ lệ hóa đơn tự động hóa | 90% |
-| Tỷ lệ merchant active | 80% trong 30 ngày |
+| Daily revenue | +15% in 90 days |
+| Repeat rate | +10% |
+| Customer acquisition cost | -20% |
+| Invoice automation rate | 90% |
+| Active merchant rate | 80% in 30 days |
 
 ```mermaid
 flowchart LR
@@ -47,9 +47,9 @@ flowchart LR
 - Cảnh báo mục tiêu chưa đạt
 
 #### B. Growth Marketing Suite
-- Tạo chiến dịch quảng cáo trên Facebook Ads và Google Ads
-- Theo dõi ROI, CPA, conversion và tỉ lệ quay lại
-- Chọn đối tượng phù hợp theo khu vực, ngành hàng và hành vi mua
+- Launch ad campaigns on Facebook Ads and Google Ads
+- Track ROI, CPA, conversion rate, and repeat rate
+- Target customers by geography, category, and purchase behavior
 
 #### C. E-Invoice & Compliance
 - Tự động sinh hóa đơn từ giao dịch QR
@@ -124,15 +124,15 @@ graph TB
 +-----------------------------------------------------------+
 ```
 
-### 3.3 Màn hình hiệu quả chiến dịch
+### 3.3 Campaign performance screen
 
 ```text
 +-----------------------------------------------------------+
-| Hiệu quả chiến dịch                                      |
+| Campaign Performance                                     |
 |-----------------------------------------------------------|
-| Tổng chi phí | 2.4M ₫ | Hiệu quả: 18% | CPA: 85K ₫        |
+| Total spend | 2.4M ₫ | ROI: 18% | CPA: 85K ₫            |
 |-----------------------------------------------------------|
-| [Biểu đồ conversion] [Biểu đồ ROI] [Top kênh hiệu quả]   |
+| [Conversion chart] [ROI chart] [Top-performing channel] |
 |-----------------------------------------------------------|
 | Facebook Ads: 12.4% CTR | Google Ads: 8.2% CTR          |
 +-----------------------------------------------------------+
@@ -198,14 +198,14 @@ graph TB
     I --> X
 ```
 
-### 4.2 Mapping UI → dữ liệu
+### 4.2 UI → data mapping
 
-| UI màn hình | Dữ liệu nguồn | Trường chính |
+| UI screen | Data source | Key fields |
 |---|---|---|
-| Dashboard doanh thu | sales_summary | revenue_today, revenue_week, target_progress |
+| Revenue dashboard | sales_summary | revenue_today, revenue_week, target_progress |
 | Campaign builder | ads_campaigns | campaign_name, platform, budget, objective |
-| Analytics quảng cáo | ads_metrics | ctr, cpa, conversions, roi |
-| Wizard hóa đơn | invoices | invoice_id, amount, tax_amount, status |
+| Ad analytics | ads_metrics | ctr, cpa, conversions, roi |
+| Invoice wizard | invoices | invoice_id, amount, tax_amount, status |
 
 ### 4.3 Mô hình dữ liệu rút gọn
 
@@ -294,7 +294,7 @@ flowchart LR
     style F fill:#FFEBEE,stroke:#C62828,stroke-width:2px
 ```
 
-### 5.3 Chu trình chỉ số cho sản phẩm
+### 5.3 Metrics loop for product
 
 ```mermaid
 flowchart TB
@@ -311,7 +311,7 @@ flowchart TB
     style E fill:#FFEBEE,stroke:#C62828,stroke-width:2px
 ```
 
-### 5.4 Thực thi đa bộ phận
+### 5.4 Cross-functional execution
 
 ```mermaid
 graph LR
@@ -335,28 +335,28 @@ graph LR
     style R fill:#FCE4EC,stroke:#C2185B,stroke-width:2px
 ```
 
-### 5.5 Hỏi đáp ngắn gọn cho phỏng vấn
+### 5.5 Short concise Q&A for interview
 
-- Q: JD này nói về gì?  
-  A: Xây dựng sản phẩm đặt merchant làm trung tâm, giúp SME tin tưởng vào dòng tiền, hiểu rõ hoạt động kinh doanh và phát triển nhờ dữ liệu và AI.
+- Q: What is this JD about?  
+  A: Build merchant-first products that help SMEs trust their cash flow, understand their business, and grow through better insights and AI assistance.
 
-- Q: Vì sao engagement của merchant lại quan trọng?  
-  A: Vì merchant cần sự an tâm, không chỉ là các tính năng. Khi họ tin tưởng sản phẩm, họ sẽ dùng thường xuyên và gắn bó lâu hơn.
+- Q: Why is merchant engagement important?  
+  A: Because merchants need confidence, not just features. If they trust the product, they will use it more often and stay longer.
 
-- Q: Bạn sẽ tiếp cận research người dùng như thế nào?  
-  A: Bắt đầu từ phỏng vấn thực địa, quan sát merchant lớn tuổi và ít quen công nghệ, rồi chuyển ngôn ngữ của họ thành user stories rõ ràng.
+- Q: How would you approach user research?  
+  A: Start with field interviews, observe older and less tech-savvy merchants, and turn their language into clear user stories.
 
-- Q: Những metric nào quan trọng nhất?  
-  A: Tương tác, giữ chân, chuyển đổi, tác động doanh thu và độ ổn định sau khi ra mắt.
+- Q: What metrics matter most?  
+  A: Engagement, retention, conversion, revenue impact, and stability after release.
 
-- Q: Bạn sẽ ưu tiên feature như thế nào?  
-  A: Dùng tư duy Jobs-to-be-Done: giải quyết trust + proof trước, rồi đơn giản trải nghiệm và giảm friction.
+- Q: How would you prioritize features?  
+  A: Use Jobs-to-be-Done: solve trust + proof first, then simplify the experience and remove friction.
 
-- Q: Vai trò của AI là gì?  
-  A: AI nên làm việc dễ hơn, không phức tạp hơn. Moni cần giúp merchant ra quyết định nhanh hơn bằng gợi ý đơn giản và hữu ích.
+- Q: What role does AI play?  
+  A: AI should make work easier, not more complicated. Moni should help merchants act faster with simple and useful suggestions.
 
-- Q: Điều gì làm nên một Product Trainee tốt ở đây?  
-  A: Curiosity, chủ động, đồng cảm với merchant, giao tiếp tốt và biết biến dữ liệu thành hành động.
+- Q: What makes a good product trainee here?  
+  A: Curiosity, proactivity, empathy for merchants, strong communication, and ability to turn data into action.
 
 ---
 
